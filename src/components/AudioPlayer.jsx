@@ -81,11 +81,11 @@ const AudioPlayer = ({ src, title = 'Opname', onShare }) => {
       </div>
       {onShare && (
         <button 
-          className="flex-shrink-0 w-6 h-6 text-viral-text-secondary hover:text-viral-primary transition-colors" 
+          className="flex-shrink-0 w-10 h-10 bg-gray-700 hover:bg-gray-600 rounded-full flex items-center justify-center text-white transition-colors touch-manipulation" 
           onClick={onShare}
           title="Deel opname"
         >
-          📤
+          <span className="text-sm">📤</span>
         </button>
       )}
     </div>

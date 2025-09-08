@@ -155,44 +155,35 @@ const LandingPage = ({ user, onAuthClick }) => {
         animate={{ y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
-        <div className="viral-container">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between py-4">
-            <Link to="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                <Laugh className="w-6 h-6 text-white" />
+            <Link to="/" className="flex items-center gap-2 flex-shrink-0">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                <Laugh className="w-5 h-5 text-white" />
               </div>
-              <span className="text-2xl font-bold viral-title">Lachlijn.nl</span>
+              <span className="text-xl font-bold text-white">Lachlijn.nl</span>
             </Link>
             
-            <div className="flex items-center gap-3">
-              <button 
-                onClick={() => scrollToSection('demo')}
-                className="viral-button viral-button-ghost hidden md:flex"
-              >
-                Demo
-              </button>
-              <button 
-                onClick={() => scrollToSection('scenarios')}
-                className="viral-button viral-button-ghost hidden md:flex"
-              >
-                Comedy Calls
-              </button>
+            <div className="flex items-center gap-2">
               {user ? (
-                <Link to="/dashboard" className="viral-button viral-button-primary">
-                  <Crown className="w-4 h-4" />
+                <Link to="/dashboard" className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors">
                   Dashboard
                 </Link>
               ) : (
-                <div className="flex items-center gap-2">
-                  <button onClick={() => onAuthClick('login')} className="viral-button viral-button-ghost">
+                <>
+                  <button 
+                    onClick={() => onAuthClick('login')} 
+                    className="text-white px-3 py-2 rounded-lg hover:bg-gray-800 transition-colors hidden sm:block"
+                  >
                     Inloggen
                   </button>
-                  <button onClick={handleFreeTrial} className="viral-button viral-button-primary relative">
-                    <Gift className="w-4 h-4" />
-                    GRATIS Proberen
-                    <span className="absolute -top-2 -right-2 w-4 h-4 bg-red-500 rounded-full text-xs flex items-center justify-center text-white">!</span>
+                  <button 
+                    onClick={handleFreeTrial} 
+                    className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors text-sm sm:text-base"
+                  >
+                    Gratis Proberen
                   </button>
-                </div>
+                </>
               )}
             </div>
           </div>
@@ -236,67 +227,33 @@ const LandingPage = ({ user, onAuthClick }) => {
               #1 Comedy Call Platform Nederland 🇳🇱
             </motion.div>
             
-            <h1 className="viral-title">
-              De grappigste manier om je 
-              <br />
+            <h1 className="text-5xl md:text-7xl font-black text-center mb-6">
               <span className="text-gradient bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-                vrienden te laten lachen
+                Lachlijn.nl
               </span>
-              <br />
-              🎉
             </h1>
             
-            <p className="viral-subtitle mb-8">
-              Met onze AI comedy calls kun je je vrienden verrassen met hilarische situaties en unieke stemmen.
-              <br />
-              <strong className="text-white">Alles 100% vriendelijk en voor entertainment bedoeld.</strong>
+            <p className="text-xl md:text-2xl text-center text-gray-300 mb-12 max-w-2xl mx-auto">
+              AI Comedy Calls die je vrienden doen lachen 🎭
             </p>
-
-            {/* FREE CALL HIGHLIGHT */}
-            <motion.div 
-              className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border-2 border-green-500/50 rounded-2xl p-6 mb-8 max-w-2xl mx-auto"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3, duration: 0.8 }}
-              whileHover={{ scale: 1.02 }}
-            >
-              <div className="text-center">
-                <div className="text-2xl font-bold text-green-400 mb-2">🎁 EERSTE CALL HELEMAAL GRATIS!</div>
-                <div className="text-viral-text-secondary">
-                  Geen creditcard nodig • Direct beginnen • Veilig & Leuk
-                </div>
-              </div>
-            </motion.div>
             
             <motion.div 
-              className="flex flex-col gap-4 justify-center mb-12"
+              className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.8 }}
             >
               <button 
                 onClick={handleFreeTrial}
-                className="viral-button viral-button-primary text-lg px-8 py-4 w-full sm:w-auto mx-auto relative overflow-hidden group"
+                className="bg-gradient-to-r from-green-500 to-blue-600 text-white text-xl font-bold px-12 py-4 rounded-full hover:scale-105 transition-transform shadow-2xl"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="relative flex items-center gap-3">
-                  <Play className="w-6 h-6" />
-                  <span className="font-bold">PROBEER NU JE EERSTE COMEDY CALL</span>
-                  <ArrowRight className="w-5 h-5" />
-                </div>
+                <Phone className="w-6 h-6 inline mr-3" />
+                Bel Nu
               </button>
               
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <button 
-                  onClick={() => scrollToSection('demo')}
-                  className="viral-button viral-button-secondary"
-                >
-                  <Volume2 className="w-5 h-5" />
-                  Luister Demo Eerst
-                </button>
-                <button 
-                  onClick={() => scrollToSection('scenarios')}
-                  className="viral-button viral-button-ghost"
+              <button 
+                onClick={() => scrollToSection('demo')}
+                className="bg-gray-800 text-white text-xl font-bold px-12 py-4 rounded-full hover:bg-gray-700 transition-colors border border-gray-600"
                 >
                   <Laugh className="w-5 h-5" />
                   Bekijk Scenario's

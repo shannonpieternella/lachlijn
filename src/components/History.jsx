@@ -75,20 +75,23 @@ const History = () => {
           <div className="viral-card">Geen calls gevonden</div>
         )}
         {calls.map((c) => (
-          <div key={c._id} className="viral-card p-4 overflow-hidden">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-3">
-              <div className="flex items-center gap-3 flex-1 min-w-0">
-                <div className="text-2xl flex-shrink-0">{c.scenarioIcon || '🎭'}</div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-semibold">{c.scenarioName || 'Onbekend scenario'}</div>
-                  <div className="text-viral-text-secondary text-sm truncate">{fmtDate(c.createdAt)} • {c.targetPhone}</div>
+          <div key={c._id} className="bg-gray-900/50 border border-gray-700 rounded-lg p-4 mb-4">
+            <div className="flex flex-col gap-3 mb-3">
+              <div className="flex items-center gap-3">
+                <div className="text-2xl">{c.scenarioIcon || '🎭'}</div>
+                <div className="flex-1">
+                  <div className="font-semibold text-white text-lg">{c.scenarioName || 'Onbekend scenario'}</div>
+                  <div className="text-gray-400 text-sm">{fmtDate(c.createdAt)}</div>
+                  <div className="text-gray-500 text-xs">{c.targetPhone}</div>
                 </div>
               </div>
-              <div className="flex items-center justify-between sm:justify-end gap-3 flex-shrink-0">
-                <div className="flex items-center gap-2">
-                  <div className="text-viral-text-secondary text-sm">{fmtDuration(c.duration)}</div>
-                  <div className="px-2 py-1 rounded-full border border-viral-muted text-xs capitalize">{c.status}</div>
-                </div>
+              <div className="flex items-center gap-3">
+                <div className="text-gray-300 text-sm bg-gray-800 px-3 py-1 rounded-full">{fmtDuration(c.duration)}</div>
+                <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+                  c.status === 'ended' ? 'bg-green-900 text-green-300' :
+                  c.status === 'failed' ? 'bg-red-900 text-red-300' :
+                  'bg-gray-800 text-gray-300'
+                }`}>{c.status}</div>
               </div>
             </div>
             
