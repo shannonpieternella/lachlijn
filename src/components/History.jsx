@@ -75,22 +75,22 @@ const History = () => {
           <div className="viral-card">Geen calls gevonden</div>
         )}
         {calls.map((c) => (
-          <div key={c._id} className="bg-gray-900/50 border border-gray-700 rounded-lg p-4 mb-4">
-            <div className="flex flex-col gap-3 mb-3">
-              <div className="flex items-center gap-3">
-                <div className="text-2xl">{c.scenarioIcon || '🎭'}</div>
-                <div className="flex-1">
-                  <div className="font-semibold text-white text-lg">{c.scenarioName || 'Onbekend scenario'}</div>
+          <div key={c._id} className="bg-gray-800/70 border border-gray-600 rounded-xl p-4 mb-4 shadow-lg">
+            <div className="flex flex-col gap-4 mb-4">
+              <div className="flex items-start gap-4">
+                <div className="text-3xl flex-shrink-0">{c.scenarioIcon || '🎭'}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-bold text-white text-xl mb-1 break-words">{c.scenarioName || 'Onbekend scenario'}</div>
+                  <div className="text-gray-300 text-base mb-1 break-all">{c.targetPhone}</div>
                   <div className="text-gray-400 text-sm">{fmtDate(c.createdAt)}</div>
-                  <div className="text-gray-500 text-xs">{c.targetPhone}</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="text-gray-300 text-sm bg-gray-800 px-3 py-1 rounded-full">{fmtDuration(c.duration)}</div>
-                <div className={`px-3 py-1 rounded-full text-xs font-medium ${
-                  c.status === 'ended' ? 'bg-green-900 text-green-300' :
-                  c.status === 'failed' ? 'bg-red-900 text-red-300' :
-                  'bg-gray-800 text-gray-300'
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="text-white text-base bg-gray-700 px-4 py-2 rounded-full font-medium">{fmtDuration(c.duration)}</div>
+                <div className={`px-4 py-2 rounded-full text-sm font-semibold ${
+                  c.status === 'ended' ? 'bg-green-800 text-green-200' :
+                  c.status === 'failed' ? 'bg-red-800 text-red-200' :
+                  'bg-gray-700 text-gray-200'
                 }`}>{c.status}</div>
               </div>
             </div>

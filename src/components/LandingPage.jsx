@@ -155,33 +155,35 @@ const LandingPage = ({ user, onAuthClick }) => {
         animate={{ y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-between py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="flex items-center justify-between py-3 sm:py-4">
             <Link to="/" className="flex items-center gap-2 flex-shrink-0">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                <Laugh className="w-5 h-5 text-white" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                <Laugh className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-white">Lachlijn.nl</span>
+              <span className="text-lg sm:text-xl font-bold text-white">Lachlijn.nl</span>
             </Link>
             
             <div className="flex items-center gap-2">
               {user ? (
-                <Link to="/dashboard" className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                <Link to="/dashboard" className="bg-blue-600 text-white px-3 py-2 sm:px-4 sm:py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm sm:text-base">
                   Dashboard
                 </Link>
               ) : (
                 <>
                   <button 
                     onClick={() => onAuthClick('login')} 
-                    className="text-white px-3 py-2 rounded-lg hover:bg-gray-800 transition-colors hidden sm:block"
+                    className="text-white px-2 py-2 sm:px-3 sm:py-2 rounded-lg hover:bg-gray-800 transition-colors text-sm sm:text-base"
                   >
-                    Inloggen
+                    <span className="hidden sm:inline">Inloggen</span>
+                    <span className="sm:hidden">Log in</span>
                   </button>
                   <button 
                     onClick={handleFreeTrial} 
-                    className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors text-sm sm:text-base"
+                    className="bg-green-600 text-white px-3 py-2 sm:px-4 sm:py-2 rounded-lg font-medium hover:bg-green-700 transition-colors text-sm sm:text-base flex-shrink-0"
                   >
-                    Gratis Proberen
+                    <span className="hidden sm:inline">Gratis Proberen</span>
+                    <span className="sm:hidden">Probeer</span>
                   </button>
                 </>
               )}
