@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Alle Calls – PrankCall</title>
+    <style>
+      :root { --bg: #0b0c10; --card: #121319; --muted: #8a94a6; --text: #e8ecf3; --acc: #7c5cff; }
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: var(--bg); color: var(--text); }
+      header { padding: 20px 24px; border-bottom: 1px solid #1f2230; position: sticky; top: 0; background: rgba(11,12,16,0.9); backdrop-filter: blur(8px); }
+      h1 { font-size: 20px; margin: 0; }
+      .container { max-width: 980px; margin: 0 auto; padding: 24px; }
+      .filters { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
+      .filters input, .filters select { background: #0f111a; border: 1px solid #24283b; color: var(--text); padding: 8px 10px; border-radius: 8px; }
+      .calls { display: grid; grid-template-columns: 1fr; gap: 12px; }
+      .call { background: var(--card); border: 1px solid #1f2230; border-radius: 12px; padding: 14px; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr auto; gap: 12px; align-items: center; }
+      .call .primary { display: flex; gap: 10px; align-items: center; min-width: 0; }
+      .icon { font-size: 22px; }
+      .title { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .sub { color: var(--muted); font-size: 12px; }
+      .status { padding: 4px 8px; border-radius: 999px; font-size: 12px; text-transform: capitalize; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #2a2f45; }
+      .status.ended { color: #30d158; border-color: #264a30; background: #122116; }
+      .status.failed, .status.cancelled { color: #ff453a; border-color: #4a2626; background: #1f1212; }
+      .status.in-progress, .status.ringing, .status.forwarding { color: #ffd60a; border-color: #4a4326; background: #1f1b12; }
+      .pill { font-size: 12px; color: var(--muted); }
+      .audio { display: flex; align-items: center; gap: 8px; }
+      .btn { background: #171a26; color: var(--text); border: 1px solid #2a2f45; padding: 8px 10px; border-radius: 10px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+      .btn:hover { border-color: #3b4160; }
+      .btn.play { background: #15162a; border-color: #323462; }
+      .empty { border: 1px dashed #2a2f45; padding: 20px; border-radius: 12px; color: var(--muted); text-align: center; }
+      .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      @media (max-width: 900px) { .call { grid-template-columns: 1fr; align-items: start; } .row { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Alle Calls</h1>
+    </header>
+    <div class="container">
+      <div class="filters">
+        <input id="search" placeholder="Zoek op scenario of nummer" />
+        <select id="status">
+          <option value="">Alle status</option>
+          <option value="queued">Queued</option>
+          <option value="ringing">Ringing</option>
+          <option value="in-progress">In progress</option>
+          <option value="forwarding">Forwarding</option>
+          <option value="ended">Ended</option>
+          <option value="failed">Failed</option>
+          <option value="cancelled">Cancelled</option>
+          <option value="timeout">Timeout</option>
+        </select>
+        <select id="limit">
+          <option value="25">25</option>
+          <option value="50" selected>50</option>
+          <option value="100">100</option>
+        </select>
+        <button class="btn" id="reload">Vernieuwen</button>
+      </div>
+      <div id="calls" class="calls"></div>
+      <div id="empty" class="empty" style="display:none;">Nog geen calls gevonden</div>
+    </div>
+
+    <script>
+      const el = (sel) => document.querySelector(sel)
+      const callsEl = el('#calls')
+      const emptyEl = el('#empty')
+
+      function token() {
+        return localStorage.getItem('token') || ''
+      }
+
+      function fmtDate(iso) {
+        try { return new Date(iso).toLocaleString('nl-NL') } catch { return '' }
+      }
+      function fmtDuration(sec) {
+        sec = sec || 0
+        const m = Math.floor(sec / 60)
+        const s = (sec % 60).toString().padStart(2, '0')
+        return m + ':' + s
+      }
+
+      async function fetchCalls() {
+        const limit = el('#limit').value
+        const status = el('#status').value
+        const params = new URLSearchParams({ limit })
+        if (status) params.set('status', status)
+        const res = await fetch('/api/calls?' + params.toString(), {
+          headers: { 'Authorization': token() ? 'Bearer ' + token() : '' }
+        })
+        if (!res.ok) {
+          const t = await res.text()
+          throw new Error('Kon calls niet ophalen: ' + t)
+        }
+        const data = await res.json()
+        return data.calls || []
+      }
+
+      function renderCalls(list) {
+        callsEl.innerHTML = ''
+        const q = (el('#search').value || '').toLowerCase()
+        const filtered = list.filter(c => {
+          const needle = (c.scenarioName || '') + ' ' + (c.targetPhone || '')
+          return needle.toLowerCase().includes(q)
+        })
+        if (filtered.length === 0) {
+          emptyEl.style.display = 'block'
+          return
+        }
+        emptyEl.style.display = 'none'
+        for (const c of filtered) {
+          const recordingAvailable = Boolean((c.recording && c.recording.isAvailable && c.recording.url) || (c.vapiData && c.vapiData.recordingUrl))
+          const row = document.createElement('div')
+          row.className = 'call'
+          row.innerHTML = `
+            <div class="primary">
+              <div class="icon">${c.scenarioIcon || '🎭'}</div>
+              <div style="min-width:0;">
+                <div class="title">${c.scenarioName || 'Onbekend scenario'}</div>
+                <div class="sub">${c.formattedPhone || c.targetPhone || ''}</div>
+              </div>
+            </div>
+            <div class="pill">${fmtDate(c.createdAt)}</div>
+            <div class="pill">Duur: ${fmtDuration(c.duration)}</div>
+            <div class="pill">
+              <span class="status ${c.status}">${c.status}</span>
+            </div>
+            <div class="audio">
+              ${recordingAvailable ? `<button class="btn play" data-id="${c._id}">▶︎ Luister</button>` : '<span class="sub">Geen opname</span>'}
+            </div>
+          `
+          callsEl.appendChild(row)
+        }
+      }
+
+      function wirePlayback(list) {
+        callsEl.addEventListener('click', (e) => {
+          const btn = e.target.closest('button.play')
+          if (!btn) return
+          const id = btn.getAttribute('data-id')
+          // Use server redirect endpoint for same-origin streaming
+          const audioUrl = '/api/calls/' + id + '/recording'
+          let audio = btn._audio
+          if (!audio) {
+            audio = new Audio(audioUrl)
+            btn._audio = audio
+          }
+          if (audio.paused) {
+            audio.play().catch(err => alert('Kan audio niet afspelen: ' + err.message))
+            btn.textContent = '⏸︎ Pauzeer'
+            audio.onended = () => { btn.textContent = '▶︎ Luister' }
+          } else {
+            audio.pause()
+            btn.textContent = '▶︎ Luister'
+          }
+        })
+      }
+
+      async function load() {
+        try {
+          const calls = await fetchCalls()
+          renderCalls(calls)
+          wirePlayback(calls)
+        } catch (e) {
+          emptyEl.style.display = 'block'
+          emptyEl.textContent = e.message
+        }
+      }
+
+      el('#reload').addEventListener('click', load)
+      el('#search').addEventListener('input', () => {
+        // Re-render from last fetched list by reloading quickly
+        load()
+      })
+      el('#status').addEventListener('change', load)
+      el('#limit').addEventListener('change', load)
+
+      load()
+    </script>
+  </body>
+  </html>
+

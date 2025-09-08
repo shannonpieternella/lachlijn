@@ -1,0 +1,5 @@
+/* Project styles (no Tailwind) */
+@import './viral.css';
+
+/* Optional root container sizing (safe defaults) */
+#root { min-height: 100vh; }
