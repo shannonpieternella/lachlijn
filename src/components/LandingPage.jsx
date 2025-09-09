@@ -440,7 +440,7 @@ const LandingPage = ({ user, onAuthClick }) => {
                   
                   <button 
                     onClick={() => handleStartComedy(scenario)}
-                    className="bg-gradient-to-r from-green-500 to-blue-600 text-white font-bold px-6 py-3 rounded-full hover:scale-105 transition-transform shadow-lg mb-3 w-full"
+                    className="bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold px-6 py-3 rounded-full hover:scale-105 transition-transform shadow-lg mb-3 w-full border-2 border-orange-400"
                   >
                     <Phone className="w-4 h-4 inline mr-2" />
                     Bel Nu

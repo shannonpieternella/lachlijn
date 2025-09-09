@@ -41,10 +41,10 @@ const History = () => {
   }
 
   return (
-    <div className="viral-container py-8">
-      <div className="viral-card mb-4">
-        <div className="flex flex-col sm:flex-row gap-2">
-          <select value={status} onChange={(e) => setStatus(e.target.value)} className="viral-input flex-1">
+    <div className="min-h-screen bg-gray-900 py-8 px-4">
+      <div className="bg-gray-800 p-4 rounded-lg mb-6 border border-gray-700 max-w-4xl mx-auto">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <select value={status} onChange={(e) => setStatus(e.target.value)} className="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 flex-1">
             <option value="">Alle status</option>
             <option value="queued">Queued</option>
             <option value="ringing">Ringing</option>
@@ -55,24 +55,24 @@ const History = () => {
             <option value="cancelled">Cancelled</option>
             <option value="timeout">Timeout</option>
           </select>
-          <select value={limit} onChange={(e) => setLimit(parseInt(e.target.value))} className="viral-input sm:w-20">
+          <select value={limit} onChange={(e) => setLimit(parseInt(e.target.value))} className="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 sm:w-24">
             <option value={25}>25</option>
             <option value={50}>50</option>
             <option value={100}>100</option>
           </select>
-          <button className="viral-button sm:w-auto w-full" onClick={load}>Vernieuwen</button>
+          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-medium transition-colors sm:w-auto w-full" onClick={load}>Vernieuwen</button>
         </div>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-4 max-w-4xl mx-auto">
         {loading && (
-          <div className="viral-card">Calls laden...</div>
+          <div className="bg-gray-800 p-4 rounded-lg text-white text-center">Calls laden...</div>
         )}
         {error && (
-          <div className="viral-card text-red-400">{error}</div>
+          <div className="bg-red-800 p-4 rounded-lg text-red-200 text-center">{error}</div>
         )}
         {!loading && !error && calls.length === 0 && (
-          <div className="viral-card">Geen calls gevonden</div>
+          <div className="bg-gray-800 p-4 rounded-lg text-gray-300 text-center">Geen calls gevonden</div>
         )}
         {calls.map((c) => (
           <div key={c._id} className="bg-gray-900/95 border border-gray-600 rounded-xl p-6 mb-6 shadow-2xl backdrop-blur-sm">

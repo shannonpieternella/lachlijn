@@ -53,7 +53,7 @@ app.use(helmet({
 // CORS configuration
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://prankcall.nl', 'https://www.prankcall.nl']
+    ? ['https://lachlijn.nl', 'https://www.lachlijn.nl']
     : ['http://localhost:5173', 'http://127.0.0.1:5173'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
@@ -85,7 +85,7 @@ if (process.env.NODE_ENV === 'development') {
 app.get('/health', (req, res) => {
   res.json({
     success: true,
-    message: 'PrankCall.nl API is running! 🎭',
+    message: 'Lachlijn.nl API is running! 🎭',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development'
   })
@@ -102,6 +102,14 @@ app.use('/api/billing', billingRoutes)
 // Simple HTML history page
 app.get('/history', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'history.html'))
+})
+
+// Public share redirect - redirect to frontend
+app.get('/r/:shareId', (req, res) => {
+  const frontendUrl = process.env.NODE_ENV === 'production' 
+    ? 'https://lachlijn.nl' 
+    : 'http://localhost:5173'
+  res.redirect(`${frontendUrl}/share/${req.params.shareId}`)
 })
 
 // 404 handler

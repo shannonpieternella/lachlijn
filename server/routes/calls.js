@@ -558,7 +558,7 @@ router.post('/:callId/share', authenticateToken, async (req, res) => {
     }
     await call.save()
 
-    const base = process.env.NODE_ENV === 'production' ? 'https://prankcall.nl' : 'http://localhost:5173'
+    const base = process.env.NODE_ENV === 'production' ? 'https://lachlijn.nl' : 'http://localhost:5173'
     const publicUrl = `${base}/r/${call.recording.shareId}`
     return res.json({ success: true, url: publicUrl, shareId: call.recording.shareId })
   } catch (error) {
