@@ -173,14 +173,14 @@ const LandingPage = ({ user, onAuthClick }) => {
                 <>
                   <button 
                     onClick={() => onAuthClick('login')} 
-                    className="text-white px-2 py-2 sm:px-3 sm:py-2 rounded-lg hover:bg-gray-800 transition-colors text-sm sm:text-base"
+                    className="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-3 py-2 sm:px-4 sm:py-2 rounded-lg font-medium hover:from-gray-600 hover:to-gray-500 transition-all text-sm sm:text-base border border-gray-500"
                   >
                     <span className="hidden sm:inline">Inloggen</span>
                     <span className="sm:hidden">Log in</span>
                   </button>
                   <button 
                     onClick={handleFreeTrial} 
-                    className="bg-green-600 text-white px-3 py-2 sm:px-4 sm:py-2 rounded-lg font-medium hover:bg-green-700 transition-colors text-sm sm:text-base flex-shrink-0"
+                    className="bg-gradient-to-r from-green-500 to-blue-600 text-white px-4 py-2 sm:px-6 sm:py-2 rounded-lg font-bold hover:scale-105 transition-transform text-sm sm:text-base flex-shrink-0 shadow-lg"
                   >
                     <span className="hidden sm:inline">Gratis Proberen</span>
                     <span className="sm:hidden">Probeer</span>
@@ -426,17 +426,25 @@ const LandingPage = ({ user, onAuthClick }) => {
                   </p>
                   
                   {scenario.playbackUrl ? (
-                    <div className="mb-3">
+                    <div className="mb-4">
                       <AudioPlayer
                         src={scenario.playbackUrl}
                         title={`${scenario.name} Demo`}
                       />
                     </div>
                   ) : (
-                    <div className="mb-3 p-3 bg-viral-dark-lighter rounded-lg text-viral-text-muted text-sm">
+                    <div className="mb-4 p-3 bg-viral-dark-lighter rounded-lg text-viral-text-muted text-sm">
                       Demo niet beschikbaar
                     </div>
                   )}
+                  
+                  <button 
+                    onClick={() => handleStartComedy(scenario)}
+                    className="bg-gradient-to-r from-green-500 to-blue-600 text-white font-bold px-6 py-3 rounded-full hover:scale-105 transition-transform shadow-lg mb-3 w-full"
+                  >
+                    <Phone className="w-4 h-4 inline mr-2" />
+                    Bel Nu
+                  </button>
                   
                   <div className="text-xs text-green-400 bg-green-500/10 px-3 py-1 rounded-full">
                     ✓ Entertainment Only

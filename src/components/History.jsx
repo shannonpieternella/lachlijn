@@ -75,22 +75,22 @@ const History = () => {
           <div className="viral-card">Geen calls gevonden</div>
         )}
         {calls.map((c) => (
-          <div key={c._id} className="bg-gray-800/70 border border-gray-600 rounded-xl p-4 mb-4 shadow-lg">
+          <div key={c._id} className="bg-gray-900/95 border border-gray-600 rounded-xl p-6 mb-6 shadow-2xl backdrop-blur-sm">
             <div className="flex flex-col gap-4 mb-4">
               <div className="flex items-start gap-4">
-                <div className="text-3xl flex-shrink-0">{c.scenarioIcon || '🎭'}</div>
+                <div className="text-4xl flex-shrink-0 bg-gray-800 p-3 rounded-full">{c.scenarioIcon || '🎭'}</div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-bold text-white text-xl mb-1 break-words">{c.scenarioName || 'Onbekend scenario'}</div>
-                  <div className="text-gray-300 text-base mb-1 break-all">{c.targetPhone}</div>
-                  <div className="text-gray-400 text-sm">{fmtDate(c.createdAt)}</div>
+                  <div className="font-bold text-white text-2xl mb-2 break-words bg-gray-800/50 p-2 rounded-lg">{c.scenarioName || 'Onbekend scenario'}</div>
+                  <div className="text-gray-200 text-lg mb-2 break-all bg-gray-800/30 p-2 rounded font-mono">{c.targetPhone}</div>
+                  <div className="text-gray-300 text-base bg-gray-800/20 p-2 rounded">{fmtDate(c.createdAt)}</div>
                 </div>
               </div>
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="text-white text-base bg-gray-700 px-4 py-2 rounded-full font-medium">{fmtDuration(c.duration)}</div>
-                <div className={`px-4 py-2 rounded-full text-sm font-semibold ${
-                  c.status === 'ended' ? 'bg-green-800 text-green-200' :
-                  c.status === 'failed' ? 'bg-red-800 text-red-200' :
-                  'bg-gray-700 text-gray-200'
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="text-white text-lg bg-blue-600 px-5 py-3 rounded-full font-bold shadow-lg">{fmtDuration(c.duration)}</div>
+                <div className={`px-5 py-3 rounded-full text-base font-bold shadow-lg ${
+                  c.status === 'ended' ? 'bg-green-600 text-white' :
+                  c.status === 'failed' ? 'bg-red-600 text-white' :
+                  'bg-orange-600 text-white'
                 }`}>{c.status}</div>
               </div>
             </div>
@@ -112,10 +112,44 @@ const History = () => {
                       })
                       const data = await res.json()
                       if (!data.success) throw new Error(data.message || 'Kon share link niet maken')
-                      await navigator.clipboard.writeText(data.url)
-                      alert('Publieke link gekopieerd!')
+                      
+                      // Try native sharing first (mobile)
+                      if (navigator.share && /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                        try {
+                          await navigator.share({
+                            title: `${c.scenarioName} - Lachlijn.nl`,
+                            text: 'Luister naar deze comedy call van Lachlijn.nl!',
+                            url: data.url
+                          })
+                          return
+                        } catch (shareError) {
+                          // Fall back to clipboard if share cancelled
+                        }
+                      }
+                      
+                      // Fallback to clipboard
+                      if (navigator.clipboard && window.isSecureContext) {
+                        await navigator.clipboard.writeText(data.url)
+                        alert('Publieke link gekopieerd naar klembord!')
+                      } else {
+                        // Fallback for older browsers
+                        const textArea = document.createElement('textarea')
+                        textArea.value = data.url
+                        textArea.style.position = 'fixed'
+                        textArea.style.opacity = '0'
+                        document.body.appendChild(textArea)
+                        textArea.focus()
+                        textArea.select()
+                        try {
+                          document.execCommand('copy')
+                          alert('Publieke link gekopieerd!')
+                        } catch (err) {
+                          prompt('Kopieer deze link:', data.url)
+                        }
+                        document.body.removeChild(textArea)
+                      }
                     } catch (e) {
-                      alert(e.message)
+                      alert('Fout bij delen: ' + e.message)
                     }
                   }}
                 />
