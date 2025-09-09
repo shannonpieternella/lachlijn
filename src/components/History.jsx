@@ -41,7 +41,7 @@ const History = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 py-8 px-4">
+    <div className="min-h-screen bg-gray-900 py-8 px-4 fixed inset-0 z-10 overflow-auto">
       <div className="bg-gray-800 p-4 rounded-lg mb-6 border border-gray-700 max-w-4xl mx-auto">
         <div className="flex flex-col sm:flex-row gap-3">
           <select value={status} onChange={(e) => setStatus(e.target.value)} className="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 flex-1">

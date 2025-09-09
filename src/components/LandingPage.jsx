@@ -255,9 +255,9 @@ const LandingPage = ({ user, onAuthClick }) => {
               
               <button 
                 onClick={() => scrollToSection('demo')}
-                className="bg-gray-800 text-white text-xl font-bold px-12 py-4 rounded-full hover:bg-gray-700 transition-colors border border-gray-600"
+                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xl font-bold px-12 py-4 rounded-full hover:scale-105 transition-transform shadow-2xl border-2 border-purple-400"
                 >
-                  <Laugh className="w-5 h-5" />
+                  <Laugh className="w-5 h-5 inline mr-3" />
                   Bekijk Scenario's
                 </button>
               </motion.div>
