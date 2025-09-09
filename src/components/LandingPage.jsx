@@ -260,8 +260,7 @@ const LandingPage = ({ user, onAuthClick }) => {
                   <Laugh className="w-5 h-5" />
                   Bekijk Scenario's
                 </button>
-              </div>
-            </motion.div>
+              </motion.div>
 
             {/* Social Proof Stats */}
             <motion.div 
