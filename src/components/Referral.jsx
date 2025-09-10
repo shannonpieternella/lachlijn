@@ -142,8 +142,8 @@ const Referral = ({ user }) => {
           </div>
           <h1 className="viral-heading">Nodig Vrienden Uit 🚀</h1>
           <p className="viral-text">
-            Verdien gratis prank calls door je vrienden uit te nodigen! 
-            Hoe meer vrienden, hoe meer gratis calls! 
+            Verdien gratis credits wanneer je gereferreerde vrienden credits kopen! 
+            Deel je link en verdien 1 credit per aankoop van nieuwe gebruikers.
           </p>
         </div>
 
@@ -496,8 +496,8 @@ const Referral = ({ user }) => {
             <h3 className="text-2xl font-bold mb-4">
               💡 Pro Tip: Deel Je Beste Prank!
             </h3>
-            <p className="text-viral-text-secondary mb-6">
-              Laat vrienden je grappigste prank opname horen - ze worden gegarandeerd nieuwsgierig en melden zich aan!
+            <p className="text-white mb-6">
+              Laat vrienden je grappigste prank opname horen - ze worden nieuwsgierig, melden zich aan, én kopen credits!
             </p>
             <a href="/dashboard" className="viral-button viral-button-primary">
               <Star className="w-5 h-5" />
