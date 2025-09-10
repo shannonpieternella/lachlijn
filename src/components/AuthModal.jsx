@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Mail, Lock, User, Phone, Eye, EyeOff, Laugh } from 'lucide-react'
+import { X, Mail, Lock, User, Eye, EyeOff, Laugh } from 'lucide-react'
 
 const AuthModal = ({ isOpen, onClose, onAuth, initialMode = 'login' }) => {
   const [isLogin, setIsLogin] = useState(initialMode === 'login')
@@ -9,8 +9,7 @@ const AuthModal = ({ isOpen, onClose, onAuth, initialMode = 'login' }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    password: '',
-    phone: ''
+    password: ''
   })
 
   const handleSubmit = async (e) => {
@@ -38,13 +37,10 @@ const AuthModal = ({ isOpen, onClose, onAuth, initialMode = 'login' }) => {
         localStorage.setItem('authToken', data.token)
         
         // Pass user data to parent
-        onAuth({
-          ...data.user,
-          phone: formData.phone // Include phone if provided during registration
-        })
+        onAuth(data.user)
         
         // Reset form
-        setFormData({ name: '', email: '', password: '', phone: '' })
+        setFormData({ name: '', email: '', password: '' })
       } else {
         // Handle error - you might want to show an error message
         console.error('Auth error:', data.message)
@@ -111,7 +107,7 @@ const AuthModal = ({ isOpen, onClose, onAuth, initialMode = 'login' }) => {
             {!isLogin && (
               <div>
                 <label className="block text-sm font-medium text-viral-text-secondary mb-2">
-                  Voor- en Achternaam
+                  Voor- en Achternaam *
                 </label>
                 <div className="relative">
                   <User className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-viral-text-muted" />
@@ -146,24 +142,6 @@ const AuthModal = ({ isOpen, onClose, onAuth, initialMode = 'login' }) => {
               </div>
             </div>
 
-            {!isLogin && (
-              <div>
-                <label className="block text-sm font-medium text-viral-text-secondary mb-2">
-                  Telefoonnummer (Optioneel)
-                </label>
-                <div className="relative">
-                  <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-viral-text-muted" />
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    className="viral-input pl-12"
-                    placeholder="+31 6 12345678"
-                  />
-                </div>
-              </div>
-            )}
 
             <div>
               <label className="block text-sm font-medium text-viral-text-secondary mb-2">

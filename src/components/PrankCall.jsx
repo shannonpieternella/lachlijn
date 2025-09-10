@@ -396,7 +396,7 @@ const PrankCall = ({ user: initialUser }) => {
     }, 3000)
   }
 
-  const canStartCall = selectedScenario && targetPhone && user.credits > 0 && callStatus === 'idle'
+  const canStartCall = selectedScenario && targetPhone && targetName.trim() && user.credits > 0 && callStatus === 'idle'
 
   return (
     <div className="viral-container py-8">
@@ -593,7 +593,7 @@ const PrankCall = ({ user: initialUser }) => {
                   {/* Target Name */}
                   <div>
                     <label className="block text-sm font-medium text-viral-text-secondary mb-2">
-                      Naam van de persoon (optioneel)
+                      Naam van de persoon *
                     </label>
                     <input
                       type="text"
@@ -601,6 +601,7 @@ const PrankCall = ({ user: initialUser }) => {
                       onChange={(e) => setTargetName(e.target.value)}
                       className="viral-input"
                       placeholder="Shannon"
+                      required
                     />
                     <p className="text-xs text-viral-text-muted mt-2">
                       De AI zal beginnen met "Hello [naam]" als je een naam invult
