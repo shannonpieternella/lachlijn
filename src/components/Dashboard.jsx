@@ -257,18 +257,19 @@ const Dashboard = ({ user }) => {
             
             <motion.button
               onClick={() => {
-                const shareUrl = `${window.location.origin}?ref=${user._id || user.id}`
-                const shareText = `Check deze coole AI prank call app! 🎭 ${shareUrl}`
+                const referralCode = user.referral?.code || user._id
+                const shareUrl = `${window.location.origin}/ref/${referralCode}`
+                const shareText = `🎭 Check deze hilarische AI prank call app! Krijg 1 gratis call bij aanmelding! ${shareUrl}`
                 
                 if (navigator.share) {
                   navigator.share({
-                    title: 'PrankCall.nl - AI Prank Calls',
+                    title: 'Lachlijn.nl - AI Comedy Calls',
                     text: shareText,
                     url: shareUrl
                   })
                 } else {
                   navigator.clipboard.writeText(shareText).then(() => {
-                    alert('Link gekopieerd naar clipboard! 📋')
+                    alert('Referral link gekopieerd naar clipboard! 📋')
                   }).catch(() => {
                     alert(`Deel deze link: ${shareUrl}`)
                   })
