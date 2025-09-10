@@ -73,35 +73,20 @@ router.post('/register', async (req, res) => {
 
     await user.save()
 
-    // Update referrer
+    // Update referrer - but don't give credits yet, wait for new user to purchase
     if (referredBy) {
-      // Check if referrer has purchased credits
-      const hasPurchasedCredits = referredBy.hasPurchasedCredits()
-      const creditsToGive = hasPurchasedCredits ? 1 : 0 // Only give credit if referrer has purchased credits
-      
       referredBy.referral.invites.push({
         userId: user._id,
         email: user.email,
         name: user.name,
         invitedAt: new Date(),
-        creditsEarned: creditsToGive
+        creditsEarned: 0, // Will be set to 1 when new user makes first purchase
+        rewardedAt: null
       })
       referredBy.referral.totalInvites += 1
       
-      if (hasPurchasedCredits) {
-        referredBy.referral.creditsEarned += 1
-        referredBy.credits += 1 // Only 1 credit if they have purchased before
-        console.log(`🎁 Referrer ${referredBy.email} earned 1 credit for referring ${user.email}`)
-      } else {
-        console.log(`⏳ Referrer ${referredBy.email} will earn credit when they purchase credits`)
-      }
-      
       await referredBy.save()
-      
-      // Check for milestones if credits were given
-      if (hasPurchasedCredits) {
-        await referredBy.checkViralMilestones()
-      }
+      console.log(`📝 User ${user.email} referred by ${referredBy.email} - referrer will earn credit when new user purchases`)
     }
 
     // Generate JWT

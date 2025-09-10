@@ -46,12 +46,14 @@ router.get('/stats', authenticateToken, async (req, res) => {
         recentInvites: user.referral.invites
           .filter(invite => invite.isActive)
           .sort((a, b) => new Date(b.invitedAt) - new Date(a.invitedAt))
-          .slice(0, 5)
+          .slice(0, 10)
           .map(invite => ({
             name: invite.name,
             email: invite.email.replace(/(.{1}).*(@.*)/, '$1***$2'), // Mask email
             invitedAt: invite.invitedAt,
             creditsEarned: invite.creditsEarned,
+            rewardedAt: invite.rewardedAt,
+            hasPurchased: invite.creditsEarned > 0,
             isActive: invite.isActive
           }))
       }

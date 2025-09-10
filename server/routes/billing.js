@@ -273,25 +273,44 @@ router.get('/verify-payment/:sessionId', process.env.NODE_ENV === 'production' ?
       creditsAdded = credits
       console.log(`✅ Verify-payment: Added ${credits} credits, user now has ${creditedUser.credits} credits (was ${creditsBefore})`)
       
-      // Process referral rewards since user has now purchased credits
+      // Process referral rewards: when this user makes first purchase, reward THEIR referrer
       try {
-        let rewardsGiven = 0
-        for (let invite of creditedUser.referral.invites) {
-          if (invite.isActive && invite.creditsEarned === 0) {
-            // Give 1 credit to referrer for this invite
-            creditedUser.credits += 1
-            creditedUser.referral.creditsEarned += 1
-            invite.creditsEarned = 1
-            rewardsGiven += 1
-          }
-        }
+        // Check if this is the user's first purchase
+        const isFirstPurchase = !creditedUser.hasEverPurchased
         
-        if (rewardsGiven > 0) {
+        if (isFirstPurchase) {
+          // Mark user as having made their first purchase
+          creditedUser.hasEverPurchased = true
           await creditedUser.save()
-          console.log(`🎁 Processed ${rewardsGiven} referral rewards for user ${creditedUser.id}`)
           
-          // Check for new milestones
-          await creditedUser.checkViralMilestones()
+          // If this user was referred by someone, reward the referrer
+          if (creditedUser.referral.referredBy) {
+            const referrer = await User.findById(creditedUser.referral.referredBy)
+            
+            if (referrer) {
+              // Find the invite record for this user
+              const inviteIndex = referrer.referral.invites.findIndex(
+                invite => invite.userId.toString() === creditedUser._id.toString()
+              )
+              
+              if (inviteIndex !== -1 && referrer.referral.invites[inviteIndex].creditsEarned === 0) {
+                // Give 1 credit to the referrer
+                referrer.credits += 1
+                referrer.referral.creditsEarned += 1
+                referrer.referral.invites[inviteIndex].creditsEarned = 1
+                referrer.referral.invites[inviteIndex].rewardedAt = new Date()
+                
+                await referrer.save()
+                
+                console.log(`🎁 User ${creditedUser.email} made first purchase - rewarded referrer ${referrer.email} with 1 credit`)
+                
+                // Check for new milestones for referrer
+                await referrer.checkViralMilestones()
+              }
+            }
+          }
+        } else {
+          console.log(`⚠️ Not first purchase for user ${creditedUser.id}, skipping referral rewards`)
         }
       } catch (referralError) {
         console.error('Error processing referral rewards:', referralError)

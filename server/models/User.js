@@ -60,6 +60,10 @@ const userSchema = new mongoose.Schema({
   stripeCustomerId: {
     type: String // Voor Stripe integratie
   },
+  hasEverPurchased: {
+    type: Boolean,
+    default: false // Track if user has ever made a purchase
+  },
   // Usage statistics
   stats: {
     totalCalls: { type: Number, default: 0 },
@@ -98,7 +102,8 @@ const userSchema = new mongoose.Schema({
       email: String,
       name: String,
       invitedAt: { type: Date, default: Date.now },
-      creditsEarned: { type: Number, default: 2 },
+      creditsEarned: { type: Number, default: 0 },
+      rewardedAt: { type: Date }, // When the referrer received credit for this invite
       isActive: { type: Boolean, default: true }
     }],
     totalInvites: { type: Number, default: 0 },
@@ -216,6 +221,12 @@ userSchema.methods.getReferralStats = function() {
 userSchema.methods.hasPurchasedCredits = function() {
   // User has purchased if they have used credits (totalCalls > 0) or have more than 1 credit
   return this.stats.totalCalls > 0 || this.credits > 1
+}
+
+// Check if user has made their first purchase (to limit referral rewards to first purchase only)
+userSchema.methods.hasCompletedFirstPurchase = function() {
+  // Check if any referral invite has already earned credits (indicates first purchase was processed)
+  return this.referral.invites.some(invite => invite.creditsEarned > 0)
 }
 
 // Get next milestone info
