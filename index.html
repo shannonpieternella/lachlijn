@@ -45,6 +45,7 @@
       // Configuration
       var TRACKING_URL = 'https://tracking.upsellbusinessagency.com';
       var DOMAIN = 'lachlijn.nl';
+      var currentPath = window.location.pathname;
       
       // Cookie functions
       function setCookie(name, value, days) {
@@ -82,55 +83,88 @@
         setCookie('utm_session_id', sessionId, 1);
       }
       
-      // Get UTM parameters from URL
-      var urlParams = new URLSearchParams(window.location.search);
-      var utmSource = urlParams.get('utm_source');
-      var utmMedium = urlParams.get('utm_medium');
-      var utmCampaign = urlParams.get('utm_campaign');
-      var utmContent = urlParams.get('utm_content');
-      var utmTerm = urlParams.get('utm_term');
-      
-      // If new UTM params found, update cookies (24 hour expiry)
-      if (utmSource) {
-        setCookie('utm_source', utmSource, 1);
-        setCookie('utm_medium', utmMedium || 'none', 1);
-        setCookie('utm_campaign', utmCampaign || '(not set)', 1);
-        if (utmContent) setCookie('utm_content', utmContent, 1);
-        if (utmTerm) setCookie('utm_term', utmTerm, 1);
+      function trackPageView() {
+        // Get UTM parameters from URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var utmSource = urlParams.get('utm_source');
+        var utmMedium = urlParams.get('utm_medium');
+        var utmCampaign = urlParams.get('utm_campaign');
+        var utmContent = urlParams.get('utm_content');
+        var utmTerm = urlParams.get('utm_term');
+        
+        // If new UTM params found, update cookies (24 hour expiry)
+        if (utmSource) {
+          setCookie('utm_source', utmSource, 1);
+          setCookie('utm_medium', utmMedium || 'none', 1);
+          setCookie('utm_campaign', utmCampaign || '(not set)', 1);
+          if (utmContent) setCookie('utm_content', utmContent, 1);
+          if (utmTerm) setCookie('utm_term', utmTerm, 1);
+        }
+        
+        // Get UTM params from cookies or default
+        utmSource = utmSource || getCookie('utm_source') || 'direct';
+        utmMedium = utmMedium || getCookie('utm_medium') || 'none';
+        utmCampaign = utmCampaign || getCookie('utm_campaign') || '(not set)';
+        utmContent = utmContent || getCookie('utm_content') || '';
+        utmTerm = utmTerm || getCookie('utm_term') || '';
+        
+        // Send tracking pixel with all data
+        var img = new Image(1, 1);
+        img.src = TRACKING_URL + '/t.gif?' + 
+          'sid=' + encodeURIComponent(sessionId) +
+          '&vid=' + encodeURIComponent(visitorId) +
+          '&d=' + encodeURIComponent(DOMAIN) +
+          '&p=' + encodeURIComponent(window.location.pathname + window.location.search) +
+          '&t=' + encodeURIComponent(document.title) +
+          '&r=' + encodeURIComponent(document.referrer) +
+          '&utm_source=' + encodeURIComponent(utmSource) +
+          '&utm_medium=' + encodeURIComponent(utmMedium) +
+          '&utm_campaign=' + encodeURIComponent(utmCampaign) +
+          '&utm_content=' + encodeURIComponent(utmContent) +
+          '&utm_term=' + encodeURIComponent(utmTerm) +
+          '&ts=' + Date.now();
+        
+        // Debug info (verwijder in productie)
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+          console.log('UTM Tracker: Pagina getracked', {
+            page: window.location.pathname,
+            source: utmSource,
+            campaign: utmCampaign,
+            sessionId: sessionId.substring(0, 8) + '...'
+          });
+        }
+        
+        // Update current path
+        currentPath = window.location.pathname;
       }
       
-      // Get UTM params from cookies or default
-      utmSource = utmSource || getCookie('utm_source') || 'direct';
-      utmMedium = utmMedium || getCookie('utm_medium') || 'none';
-      utmCampaign = utmCampaign || getCookie('utm_campaign') || '(not set)';
-      utmContent = utmContent || getCookie('utm_content') || '';
-      utmTerm = utmTerm || getCookie('utm_term') || '';
+      // Track initial page load
+      trackPageView();
       
-      // Send tracking pixel with all data
-      var img = new Image(1, 1);
-      img.src = TRACKING_URL + '/t.gif?' + 
-        'sid=' + encodeURIComponent(sessionId) +
-        '&vid=' + encodeURIComponent(visitorId) +
-        '&d=' + encodeURIComponent(DOMAIN) +
-        '&p=' + encodeURIComponent(window.location.pathname + window.location.search) +
-        '&t=' + encodeURIComponent(document.title) +
-        '&r=' + encodeURIComponent(document.referrer) +
-        '&utm_source=' + encodeURIComponent(utmSource) +
-        '&utm_medium=' + encodeURIComponent(utmMedium) +
-        '&utm_campaign=' + encodeURIComponent(utmCampaign) +
-        '&utm_content=' + encodeURIComponent(utmContent) +
-        '&utm_term=' + encodeURIComponent(utmTerm) +
-        '&ts=' + Date.now();
+      // Track SPA route changes by monitoring URL changes
+      var originalPushState = history.pushState;
+      var originalReplaceState = history.replaceState;
       
-      // Debug info (verwijder in productie)
-      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        console.log('UTM Tracker: Pagina getracked', {
-          page: window.location.pathname,
-          source: utmSource,
-          campaign: utmCampaign,
-          sessionId: sessionId.substring(0, 8) + '...'
-        });
-      }
+      history.pushState = function() {
+        originalPushState.apply(history, arguments);
+        setTimeout(trackPageView, 100);
+      };
+      
+      history.replaceState = function() {
+        originalReplaceState.apply(history, arguments);
+        setTimeout(trackPageView, 100);
+      };
+      
+      window.addEventListener('popstate', function() {
+        setTimeout(trackPageView, 100);
+      });
+      
+      // Fallback: Monitor for URL changes every 1 second
+      setInterval(function() {
+        if (currentPath !== window.location.pathname) {
+          trackPageView();
+        }
+      }, 1000);
     })();
     </script>
   </head>
