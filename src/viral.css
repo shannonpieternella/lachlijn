@@ -408,6 +408,10 @@ body {
 .to-viral-secondary\/20 { --grad-to: rgba(255, 210, 63, 0.2); }
 .from-orange-500 { --grad-from: #f97316; }
 .to-red-500 { --grad-to: #ef4444; }
+.from-green-500 { --grad-from: #22c55e; }
+.to-blue-600 { --grad-to: #2563eb; }
+.from-purple-600 { --grad-from: #9333ea; }
+.to-pink-600 { --grad-to: #dc2626; }
 .to-blue-900\/20 { --grad-to: rgba(30, 58, 138, 0.2); }
 .from-green-900\/20 { --grad-from: rgba(20, 83, 45, 0.2); }
 
@@ -580,10 +584,7 @@ body {
 
 /* Hero Section */
 .viral-hero {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 48px 0 16px;
   text-align: center;
   position: relative;
   z-index: 1;
@@ -715,8 +716,7 @@ body {
   }
   
   .viral-hero {
-    min-height: 100vh;
-    padding: 80px 0;
+    padding: 40px 0;
   }
   
   .viral-card {
@@ -796,3 +796,29 @@ body {
     gap: 8px;
   }
 }
+
+/* Gradient Background Classes - Direct CSS approach */
+.bg-gradient-to-r.from-purple-600.to-pink-600 {
+  background: linear-gradient(to right, #9333ea, #ec4899) !important;
+}
+
+.bg-gradient-to-r.from-orange-500.to-red-600 {
+  background: linear-gradient(to right, #f97316, #dc2626) !important;
+}
+
+.bg-gradient-to-r.from-green-500.to-blue-600 {
+  background: linear-gradient(to right, #22c55e, #2563eb) !important;
+}
+
+/* Fallback for any gradient classes */
+.bg-gradient-to-r {
+  background: linear-gradient(to right, #f97316, #dc2626);
+}
+
+/* Individual color classes */
+.from-purple-600 { background: #9333ea; }
+.to-pink-600 { background: #ec4899; }
+.from-orange-500 { background: #f97316; }
+.to-red-600 { background: #dc2626; }
+.from-green-500 { background: #22c55e; }
+.to-blue-600 { background: #2563eb; }

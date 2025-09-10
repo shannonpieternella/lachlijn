@@ -5,32 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Alle Calls – PrankCall</title>
     <style>
-      :root { --bg: #0b0c10; --card: #121319; --muted: #8a94a6; --text: #e8ecf3; --acc: #7c5cff; }
+      :root { --bg: #0b0c10; --bg-soft: #0e1016; --card: #121319; --muted: #a3adc2; --text: #eef2f8; --acc: #7c5cff; --border: #23293d; }
       * { box-sizing: border-box; }
-      body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: var(--bg); color: var(--text); }
-      header { padding: 20px 24px; border-bottom: 1px solid #1f2230; position: sticky; top: 0; background: rgba(11,12,16,0.9); backdrop-filter: blur(8px); }
-      h1 { font-size: 20px; margin: 0; }
-      .container { max-width: 980px; margin: 0 auto; padding: 24px; }
-      .filters { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
-      .filters input, .filters select { background: #0f111a; border: 1px solid #24283b; color: var(--text); padding: 8px 10px; border-radius: 8px; }
-      .calls { display: grid; grid-template-columns: 1fr; gap: 12px; }
-      .call { background: var(--card); border: 1px solid #1f2230; border-radius: 12px; padding: 14px; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr auto; gap: 12px; align-items: center; }
+      body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%); color: var(--text); line-height: 1.45; }
+      header { padding: 14px 16px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 20; background: rgba(11,12,16,0.85); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+      h1 { font-size: 18px; margin: 0; }
+      .container { max-width: 1000px; margin: 0 auto; padding: 16px; }
+      .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; align-items: center; }
+      .filters input, .filters select { background: #0f111a; border: 1px solid var(--border); color: var(--text); padding: 8px 10px; border-radius: 8px; }
+      .calls { display: grid; grid-template-columns: 1fr; gap: 10px; }
+      .call { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; display: grid; grid-template-columns: 2fr 1fr 1fr auto auto; gap: 12px; align-items: center; }
       .call .primary { display: flex; gap: 10px; align-items: center; min-width: 0; }
       .icon { font-size: 22px; }
       .title { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .sub { color: var(--muted); font-size: 12px; }
-      .status { padding: 4px 8px; border-radius: 999px; font-size: 12px; text-transform: capitalize; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #2a2f45; }
+      .status { padding: 4px 8px; border-radius: 999px; font-size: 12px; text-transform: capitalize; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #2a2f45; white-space: nowrap; }
       .status.ended { color: #30d158; border-color: #264a30; background: #122116; }
       .status.failed, .status.cancelled { color: #ff453a; border-color: #4a2626; background: #1f1212; }
       .status.in-progress, .status.ringing, .status.forwarding { color: #ffd60a; border-color: #4a4326; background: #1f1b12; }
-      .pill { font-size: 12px; color: var(--muted); }
-      .audio { display: flex; align-items: center; gap: 8px; }
-      .btn { background: #171a26; color: var(--text); border: 1px solid #2a2f45; padding: 8px 10px; border-radius: 10px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+      .pill { font-size: 12px; color: var(--muted); min-width: 0; }
+      .audio { display: flex; align-items: center; gap: 8px; min-width: 180px; }
+      .player { width: 240px; max-width: 100%; height: 32px; }
+      .btn { background: #171a26; color: var(--text); border: 1px solid var(--border); padding: 8px 10px; border-radius: 10px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
       .btn:hover { border-color: #3b4160; }
       .btn.play { background: #15162a; border-color: #323462; }
-      .empty { border: 1px dashed #2a2f45; padding: 20px; border-radius: 12px; color: var(--muted); text-align: center; }
+      .empty { border: 1px dashed var(--border); padding: 20px; border-radius: 12px; color: var(--muted); text-align: center; }
       .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-      @media (max-width: 900px) { .call { grid-template-columns: 1fr; align-items: start; } .row { grid-template-columns: 1fr; } }
+      @media (max-width: 1100px) { .call { grid-template-columns: 1.8fr 1fr 1fr auto; } .audio { min-width: 140px } }
+      @media (max-width: 900px) { .call { grid-template-columns: 1fr; align-items: start; } .row { grid-template-columns: 1fr; } .audio { width: 100% } .player { width: 100% } }
     </style>
   </head>
   <body>
@@ -68,7 +70,8 @@
       const emptyEl = el('#empty')
 
       function token() {
-        return localStorage.getItem('token') || ''
+        // Align with app storage key
+        return localStorage.getItem('authToken') || ''
       }
 
       function fmtDate(iso) {
@@ -113,6 +116,7 @@
           const recordingAvailable = Boolean((c.recording && c.recording.isAvailable && c.recording.url) || (c.vapiData && c.vapiData.recordingUrl))
           const row = document.createElement('div')
           row.className = 'call'
+          const audioUrl = '/api/calls/' + c._id + '/recording' + (token() ? ('?token=' + encodeURIComponent(token())) : '')
           row.innerHTML = `
             <div class="primary">
               <div class="icon">${c.scenarioIcon || '🎭'}</div>
@@ -127,57 +131,33 @@
               <span class="status ${c.status}">${c.status}</span>
             </div>
             <div class="audio">
-              ${recordingAvailable ? `<button class="btn play" data-id="${c._id}">▶︎ Luister</button>` : '<span class="sub">Geen opname</span>'}
+              ${recordingAvailable ? `<audio class="player" preload="none" controls src="${audioUrl}"></audio>` : '<span class="sub">Geen opname</span>'}
             </div>
           `
           callsEl.appendChild(row)
         }
       }
 
-      function wirePlayback(list) {
-        callsEl.addEventListener('click', (e) => {
-          const btn = e.target.closest('button.play')
-          if (!btn) return
-          const id = btn.getAttribute('data-id')
-          // Use server redirect endpoint for same-origin streaming
-          const audioUrl = '/api/calls/' + id + '/recording'
-          let audio = btn._audio
-          if (!audio) {
-            audio = new Audio(audioUrl)
-            btn._audio = audio
-          }
-          if (audio.paused) {
-            audio.play().catch(err => alert('Kan audio niet afspelen: ' + err.message))
-            btn.textContent = '⏸︎ Pauzeer'
-            audio.onended = () => { btn.textContent = '▶︎ Luister' }
-          } else {
-            audio.pause()
-            btn.textContent = '▶︎ Luister'
-          }
-        })
+      function wireSearch() {
+        el('#search').addEventListener('input', () => renderCalls(lastList))
+        el('#status').addEventListener('change', load)
+        el('#limit').addEventListener('change', load)
+        el('#reload').addEventListener('click', load)
       }
 
       async function load() {
         try {
           const calls = await fetchCalls()
-          renderCalls(calls)
-          wirePlayback(calls)
+          lastList = calls
+          renderCalls(lastList)
         } catch (e) {
           emptyEl.style.display = 'block'
           emptyEl.textContent = e.message
         }
       }
 
-      el('#reload').addEventListener('click', load)
-      el('#search').addEventListener('input', () => {
-        // Re-render from last fetched list by reloading quickly
-        load()
-      })
-      el('#status').addEventListener('change', load)
-      el('#limit').addEventListener('change', load)
-
+      wireSearch()
       load()
     </script>
   </body>
   </html>
-

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import AudioPlayer from './AudioPlayer'
 
 const History = () => {
   const [calls, setCalls] = useState([])
@@ -7,23 +6,24 @@ const History = () => {
   const [error, setError] = useState('')
   const [status, setStatus] = useState('')
   const [limit, setLimit] = useState(50)
+  const [search, setSearch] = useState('')
 
-  useEffect(() => {
-    load()
-  }, [status, limit])
+  useEffect(() => { load() }, [status, limit])
 
-  const load = async () => {
+  const token = () => localStorage.getItem('authToken') || ''
+
+  async function load() {
     try {
       setLoading(true)
       setError('')
-      const params = new URLSearchParams({ limit })
+      const params = new URLSearchParams({ limit: String(limit) })
       if (status) params.set('status', status)
       const res = await fetch(`/api/calls?${params.toString()}`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+        headers: { 'Authorization': `Bearer ${token()}` }
       })
       if (!res.ok) throw new Error(await res.text())
       const data = await res.json()
-      setCalls(data.calls || [])
+      setCalls(Array.isArray(data.calls) ? data.calls : [])
     } catch (e) {
       setError(e.message || 'Kon calls niet ophalen')
     } finally {
@@ -31,20 +31,38 @@ const History = () => {
     }
   }
 
-  const fmtDate = (iso) => {
-    try { return new Date(iso).toLocaleString('nl-NL') } catch { return '' }
-  }
-  const fmtDuration = (sec = 0) => {
-    const m = Math.floor(sec / 60)
-    const s = (sec % 60).toString().padStart(2, '0')
-    return `${m}:${s}`
-  }
+  const fmtDate = (iso) => { try { return new Date(iso).toLocaleString('nl-NL') } catch { return '' } }
+  const fmtDuration = (sec = 0) => `${Math.floor((sec || 0)/60)}:${String((sec||0)%60).padStart(2,'0')}`
+
+  const filtered = calls.filter(c => {
+    const q = search.trim().toLowerCase()
+    if (!q) return true
+    const hay = `${c.scenarioName || ''} ${c.targetPhone || ''}`.toLowerCase()
+    return hay.includes(q)
+  })
 
   return (
-    <div className="min-h-screen bg-gray-900 py-8 px-4 fixed inset-0 z-10 overflow-auto">
-      <div className="bg-gray-800 p-4 rounded-lg mb-6 border border-gray-700 max-w-4xl mx-auto">
-        <div className="flex flex-col sm:flex-row gap-3">
-          <select value={status} onChange={(e) => setStatus(e.target.value)} className="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 flex-1">
+    <div className="min-h-screen bg-viral-dark text-white">
+      <header className="sticky top-0 z-10 bg-viral-dark/90 backdrop-blur border-b border-viral-border">
+        <div className="viral-container py-3">
+          <h1 className="text-lg font-semibold">Alle Calls</h1>
+        </div>
+      </header>
+
+      <div className="viral-container py-4">
+        {/* Filters */}
+        <div className="bg-viral-dark-card border border-viral-border rounded-xl p-4 flex flex-wrap gap-3 mb-4">
+          <input 
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Zoek op scenario of nummer"
+            className="viral-input flex-1 min-w-[220px]"
+          />
+          <select 
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            className="viral-select w-44"
+          >
             <option value="">Alle status</option>
             <option value="queued">Queued</option>
             <option value="ringing">Ringing</option>
@@ -55,112 +73,76 @@ const History = () => {
             <option value="cancelled">Cancelled</option>
             <option value="timeout">Timeout</option>
           </select>
-          <select value={limit} onChange={(e) => setLimit(parseInt(e.target.value))} className="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 sm:w-24">
+          <select 
+            value={limit}
+            onChange={(e) => setLimit(parseInt(e.target.value))}
+            className="viral-select w-28"
+          >
             <option value={25}>25</option>
             <option value={50}>50</option>
             <option value={100}>100</option>
           </select>
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-medium transition-colors sm:w-auto w-full" onClick={load}>Vernieuwen</button>
+          <button onClick={load} className="viral-button viral-button-ghost">🔄 Vernieuwen</button>
         </div>
-      </div>
 
-      <div className="space-y-4 max-w-4xl mx-auto">
+        {/* Loading */}
         {loading && (
-          <div className="bg-gray-800 p-4 rounded-lg text-white text-center">Calls laden...</div>
+          <div className="viral-card text-center">⏳ Laden...</div>
         )}
+
+        {/* Error */}
         {error && (
-          <div className="bg-red-800 p-4 rounded-lg text-red-200 text-center">{error}</div>
+          <div className="bg-red-950/60 border border-red-800 text-red-200 rounded-xl p-4 mb-4 text-center">❌ {error}</div>
         )}
-        {!loading && !error && calls.length === 0 && (
-          <div className="bg-gray-800 p-4 rounded-lg text-gray-300 text-center">Geen calls gevonden</div>
-        )}
-        {calls.map((c) => (
-          <div key={c._id} className="bg-gray-900/95 border border-gray-600 rounded-xl p-6 mb-6 shadow-2xl backdrop-blur-sm">
-            <div className="flex flex-col gap-4 mb-4">
-              <div className="flex items-start gap-4">
-                <div className="text-4xl flex-shrink-0 bg-gray-800 p-3 rounded-full">{c.scenarioIcon || '🎭'}</div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-bold text-white text-2xl mb-2 break-words bg-gray-800/50 p-2 rounded-lg">{c.scenarioName || 'Onbekend scenario'}</div>
-                  <div className="text-gray-200 text-lg mb-2 break-all bg-gray-800/30 p-2 rounded font-mono">{c.targetPhone}</div>
-                  <div className="text-gray-300 text-base bg-gray-800/20 p-2 rounded">{fmtDate(c.createdAt)}</div>
-                </div>
-              </div>
-              <div className="flex flex-wrap items-center gap-4">
-                <div className="text-white text-lg bg-blue-600 px-5 py-3 rounded-full font-bold shadow-lg">{fmtDuration(c.duration)}</div>
-                <div className={`px-5 py-3 rounded-full text-base font-bold shadow-lg ${
-                  c.status === 'ended' ? 'bg-green-600 text-white' :
-                  c.status === 'failed' ? 'bg-red-600 text-white' :
-                  'bg-orange-600 text-white'
-                }`}>{c.status}</div>
-              </div>
-            </div>
-            
-            <div className="w-full">
-              {c.playbackUrl ? (
-                <AudioPlayer
-                  src={`${c.playbackUrl}?token=${encodeURIComponent(localStorage.getItem('authToken') || '')}`}
-                  title={c.scenarioName || 'Opname'}
-                  onShare={async () => {
-                    try {
-                      const res = await fetch(`/api/calls/${c._id}/share`, {
-                        method: 'POST',
-                        headers: {
-                          'Content-Type': 'application/json',
-                          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-                        },
-                        body: JSON.stringify({ platform: 'link' })
-                      })
-                      const data = await res.json()
-                      if (!data.success) throw new Error(data.message || 'Kon share link niet maken')
-                      
-                      // Try native sharing first (mobile)
-                      if (navigator.share && /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                        try {
-                          await navigator.share({
-                            title: `${c.scenarioName} - Lachlijn.nl`,
-                            text: 'Luister naar deze comedy call van Lachlijn.nl!',
-                            url: data.url
-                          })
-                          return
-                        } catch (shareError) {
-                          // Fall back to clipboard if share cancelled
-                        }
-                      }
-                      
-                      // Fallback to clipboard
-                      if (navigator.clipboard && window.isSecureContext) {
-                        await navigator.clipboard.writeText(data.url)
-                        alert('Publieke link gekopieerd naar klembord!')
-                      } else {
-                        // Fallback for older browsers
-                        const textArea = document.createElement('textarea')
-                        textArea.value = data.url
-                        textArea.style.position = 'fixed'
-                        textArea.style.opacity = '0'
-                        document.body.appendChild(textArea)
-                        textArea.focus()
-                        textArea.select()
-                        try {
-                          document.execCommand('copy')
-                          alert('Publieke link gekopieerd!')
-                        } catch (err) {
-                          prompt('Kopieer deze link:', data.url)
-                        }
-                        document.body.removeChild(textArea)
-                      }
-                    } catch (e) {
-                      alert('Fout bij delen: ' + e.message)
-                    }
-                  }}
-                />
-              ) : (
-                <div className="flex items-center justify-center p-2 bg-viral-dark rounded-lg border border-viral-muted">
-                  <span className="text-xs text-viral-text-secondary">Geen opname beschikbaar</span>
-                </div>
-              )}
-            </div>
+
+        {/* Empty */}
+        {!loading && !error && filtered.length === 0 && (
+          <div className="viral-card text-center">
+            <div className="text-5xl mb-3">🎭</div>
+            <div className="font-semibold mb-1">Geen calls gevonden</div>
+            <div className="text-viral-text-secondary mb-3">Maak je eerste comedy call!</div>
+            <a href="/prank" className="viral-button viral-button-primary">🎉 Start Nu</a>
           </div>
-        ))}
+        )}
+
+        {/* List */}
+        <div className="space-y-3">
+          {filtered.map((c) => {
+            const audioSrc = c.playbackUrl ? `${c.playbackUrl}?token=${encodeURIComponent(token())}` : null
+            return (
+              <div key={c._id} className="bg-viral-dark-card border border-viral-border rounded-xl p-4">
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-3 md:items-center">
+                  {/* Primary */}
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="text-2xl">{c.scenarioIcon || '🎭'}</div>
+                    <div className="min-w-0">
+                      <div className="font-semibold truncate">{c.scenarioName || 'Onbekend scenario'}</div>
+                      <div className="text-sm text-viral-text-secondary">{c.formattedPhone || c.targetPhone || ''}</div>
+                    </div>
+                  </div>
+                  <div className="text-sm text-viral-text-secondary">{fmtDate(c.createdAt)}</div>
+                  <div className="text-sm">Duur: {fmtDuration(c.duration)}</div>
+                  <div>
+                    <span className={`text-xs px-2 py-1 rounded-full border inline-block ${
+                      c.status === 'ended' ? 'text-green-400 border-green-600/40 bg-green-500/10' :
+                      (c.status === 'failed' || c.status === 'cancelled') ? 'text-red-400 border-red-600/40 bg-red-500/10' :
+                      'text-yellow-400 border-yellow-600/40 bg-yellow-500/10'
+                    }`}>
+                      {c.status}
+                    </span>
+                  </div>
+                  <div className="md:justify-self-end w-full md:w-60">
+                    {audioSrc ? (
+                      <audio className="w-full h-8" controls preload="none" src={audioSrc} />
+                    ) : (
+                      <span className="text-sm text-viral-text-muted">Geen opname</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
       </div>
     </div>
   )

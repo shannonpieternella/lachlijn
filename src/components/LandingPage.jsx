@@ -180,7 +180,8 @@ const LandingPage = ({ user, onAuthClick }) => {
                   </button>
                   <button 
                     onClick={handleFreeTrial} 
-                    className="bg-gradient-to-r from-green-500 to-blue-600 text-white px-4 py-2 sm:px-6 sm:py-2 rounded-lg font-bold hover:scale-105 transition-transform text-sm sm:text-base flex-shrink-0 shadow-lg"
+                    className="text-white px-4 py-2 sm:px-6 sm:py-2 rounded-lg font-bold hover:scale-105 transition-transform text-sm sm:text-base flex-shrink-0 shadow-lg"
+                    style={{background: 'linear-gradient(to right, #22c55e, #2563eb)'}}
                   >
                     <span className="hidden sm:inline">Gratis Proberen</span>
                     <span className="sm:hidden">Probeer</span>
@@ -194,23 +195,6 @@ const LandingPage = ({ user, onAuthClick }) => {
 
       {/* Hero Section */}
       <section className="viral-hero relative overflow-hidden">
-        {/* Free Badge */}
-        <div className="absolute top-20 right-4 z-20">
-          <motion.div 
-            className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg"
-            animate={{ 
-              scale: [1, 1.05, 1],
-              rotate: [0, 2, -2, 0]
-            }}
-            transition={{ 
-              repeat: Infinity,
-              duration: 2
-            }}
-          >
-            <Gift className="w-4 h-4 inline mr-1" />
-            100% GRATIS
-          </motion.div>
-        </div>
 
         <div className="viral-container">
           <motion.div 
@@ -239,32 +223,13 @@ const LandingPage = ({ user, onAuthClick }) => {
               AI Comedy Calls die je vrienden doen lachen 🎭
             </p>
             
-            <motion.div 
-              className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.8 }}
-            >
-              <button 
-                onClick={handleFreeTrial}
-                className="bg-gradient-to-r from-green-500 to-blue-600 text-white text-xl font-bold px-12 py-4 rounded-full hover:scale-105 transition-transform shadow-2xl"
-              >
-                <Phone className="w-6 h-6 inline mr-3" />
-                Bel Nu
-              </button>
-              
-              <button 
-                onClick={() => scrollToSection('demo')}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xl font-bold px-12 py-4 rounded-full hover:scale-105 transition-transform shadow-2xl border-2 border-purple-400"
-                >
-                  <Laugh className="w-5 h-5 inline mr-3" />
-                  Bekijk Scenario's
-                </button>
-              </motion.div>
+           
+         
 
-            {/* Social Proof Stats */}
+            {/* Social Proof Stats */
+            }
             <motion.div 
-              className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 mt-12"
+              className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mt-4"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.8 }}
@@ -289,85 +254,6 @@ const LandingPage = ({ user, onAuthClick }) => {
               </div>
             </motion.div>
           </motion.div>
-        </div>
-      </section>
-
-
-      {/* Value Proposition Section */}
-      <section id="features" className="py-20">
-        <div className="viral-container">
-          <motion.div 
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <h2 className="viral-heading">Wat maakt Lachlijn.nl zo bijzonder?</h2>
-            <p className="viral-text">
-              Dit is geen gemene activiteit – dit is comedy entertainment bedoeld om vrienden en familie even te laten lachen
-            </p>
-          </motion.div>
-
-          <div className="viral-grid viral-grid-3">
-            {[
-              {
-                icon: <Shield className="w-8 h-8" />,
-                title: "Veilig & Vriendelijk",
-                description: "Geen beledigingen of schadelijke content. Alleen comedy calls die wij zelf goedkeuren voor positief entertainment."
-              },
-              {
-                icon: <Laugh className="w-8 h-8" />,
-                title: "Entertainment Focus",
-                description: "Gericht op plezier, niet op pesten. Alle scenario's zijn bedoeld om mensen aan het lachen te maken."
-              },
-              {
-                icon: <Mic className="w-8 h-8" />,
-                title: "100% Nederlandse AI",
-                description: "Realistische Nederlandse stem met natuurlijke conversaties voor authentiek entertainment."
-              },
-              {
-                icon: <Users className="w-8 h-8" />,
-                title: "Consent & Respect",
-                description: "Gebruik alleen bij mensen die van humor houden. Respecteer altijd de grenzen van anderen."
-              },
-              {
-                icon: <Zap className="w-8 h-8" />,
-                title: "Instant Entertainment",
-                description: "Direct beginnen met je gratis call. Geen lange wachttijden, gewoon plezier."
-              },
-              {
-                icon: <TrendingUp className="w-8 h-8" />,
-                title: "Positieve Scenarios",
-                description: "Alleen vrolijke en optimistische scenario's die mensen een glimlach bezorgen."
-              }
-            ].map((feature, index) => (
-              <motion.div 
-                key={index}
-                className="viral-card relative"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.8 }}
-                whileHover={{ y: -10 }}
-              >
-                <div className="text-viral-primary mb-4">
-                  {feature.icon}
-                </div>
-                <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
-                <p className="text-viral-text-secondary">{feature.description}</p>
-                
-                {/* Safety badge for Facebook compliance */}
-                {index < 3 && (
-                  <div className="absolute top-4 right-4">
-                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                      <CheckCircle className="w-4 h-4 text-white" />
-                    </div>
-                  </div>
-                )}
-              </motion.div>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -440,7 +326,8 @@ const LandingPage = ({ user, onAuthClick }) => {
                   
                   <button 
                     onClick={() => handleStartComedy(scenario)}
-                    className="bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold px-6 py-3 rounded-full hover:scale-105 transition-transform shadow-lg mb-3 w-full border-2 border-orange-400"
+                    className="text-white font-bold px-8 py-4 rounded-full hover:scale-105 transition-transform shadow-lg mb-3 w-full border-2 border-orange-400"
+                    style={{background: 'linear-gradient(to right, #f97316, #dc2626)'}}
                   >
                     <Phone className="w-4 h-4 inline mr-2" />
                     Bel Nu
