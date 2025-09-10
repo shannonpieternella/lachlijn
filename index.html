@@ -38,6 +38,101 @@
     <link rel="canonical" href="https://lachlijn.nl/">
     <meta name="geo.region" content="NL">
     <meta name="geo.placename" content="Nederland">
+
+    <!-- UTM Tracking Code -->
+    <script>
+    (function() {
+      // Configuration
+      var TRACKING_URL = 'https://tracking.upsellbusinessagency.com';
+      var DOMAIN = 'lachlijn.nl';
+      
+      // Cookie functions
+      function setCookie(name, value, days) {
+        var expires = "";
+        if (days) {
+          var date = new Date();
+          date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+          expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax";
+      }
+      
+      function getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(";");
+        for (var i = 0; i < ca.length; i++) {
+          var c = ca[i];
+          while (c.charAt(0) == " ") c = c.substring(1, c.length);
+          if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+      }
+      
+      // Generate unique visitor ID (persists for 365 days)
+      var visitorId = getCookie('utm_visitor_id');
+      if (!visitorId) {
+        visitorId = 'v-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        setCookie('utm_visitor_id', visitorId, 365);
+      }
+      
+      // Generate session ID (expires in 24 hours)
+      var sessionId = getCookie('utm_session_id');
+      if (!sessionId) {
+        sessionId = 's-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        setCookie('utm_session_id', sessionId, 1);
+      }
+      
+      // Get UTM parameters from URL
+      var urlParams = new URLSearchParams(window.location.search);
+      var utmSource = urlParams.get('utm_source');
+      var utmMedium = urlParams.get('utm_medium');
+      var utmCampaign = urlParams.get('utm_campaign');
+      var utmContent = urlParams.get('utm_content');
+      var utmTerm = urlParams.get('utm_term');
+      
+      // If new UTM params found, update cookies (24 hour expiry)
+      if (utmSource) {
+        setCookie('utm_source', utmSource, 1);
+        setCookie('utm_medium', utmMedium || 'none', 1);
+        setCookie('utm_campaign', utmCampaign || '(not set)', 1);
+        if (utmContent) setCookie('utm_content', utmContent, 1);
+        if (utmTerm) setCookie('utm_term', utmTerm, 1);
+      }
+      
+      // Get UTM params from cookies or default
+      utmSource = utmSource || getCookie('utm_source') || 'direct';
+      utmMedium = utmMedium || getCookie('utm_medium') || 'none';
+      utmCampaign = utmCampaign || getCookie('utm_campaign') || '(not set)';
+      utmContent = utmContent || getCookie('utm_content') || '';
+      utmTerm = utmTerm || getCookie('utm_term') || '';
+      
+      // Send tracking pixel with all data
+      var img = new Image(1, 1);
+      img.src = TRACKING_URL + '/t.gif?' + 
+        'sid=' + encodeURIComponent(sessionId) +
+        '&vid=' + encodeURIComponent(visitorId) +
+        '&d=' + encodeURIComponent(DOMAIN) +
+        '&p=' + encodeURIComponent(window.location.pathname + window.location.search) +
+        '&t=' + encodeURIComponent(document.title) +
+        '&r=' + encodeURIComponent(document.referrer) +
+        '&utm_source=' + encodeURIComponent(utmSource) +
+        '&utm_medium=' + encodeURIComponent(utmMedium) +
+        '&utm_campaign=' + encodeURIComponent(utmCampaign) +
+        '&utm_content=' + encodeURIComponent(utmContent) +
+        '&utm_term=' + encodeURIComponent(utmTerm) +
+        '&ts=' + Date.now();
+      
+      // Debug info (verwijder in productie)
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        console.log('UTM Tracker: Pagina getracked', {
+          page: window.location.pathname,
+          source: utmSource,
+          campaign: utmCampaign,
+          sessionId: sessionId.substring(0, 8) + '...'
+        });
+      }
+    })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
