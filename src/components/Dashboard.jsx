@@ -325,9 +325,6 @@ const Dashboard = ({ user }) => {
                             ))}
                           </div>
                         </div>
-                        <button className="p-1 text-viral-text-secondary hover:text-viral-primary transition-colors" title="Download">
-                          <Download className="w-4 h-4" />
-                        </button>
                       </div>
                     </div>
                     

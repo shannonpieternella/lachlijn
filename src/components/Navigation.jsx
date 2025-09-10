@@ -26,22 +26,22 @@ const Navigation = ({ user, onLogout }) => {
             <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
               <Laugh className="w-6 h-6 text-white" />
             </div>
-            <span className="text-lg font-bold viral-title flex items-center">Lachlijn.nl</span>
+            <span className="text-lg font-bold viral-title">Lachlijn.nl</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-8">
             {navItems.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full transition-colors ${
+                className={`flex items-center gap-2 px-3 py-1.5 text-sm rounded-full transition-colors ${
                   isActive(item.href)
                     ? 'bg-viral-primary text-white'
                     : 'text-viral-text-secondary hover:text-viral-text-primary hover:bg-viral-dark-lighter'
                 }`}
               >
-                <item.icon className="w-4 h-4" />
+                <item.icon className="w-3.5 h-3.5" />
                 {item.name}
               </Link>
             ))}

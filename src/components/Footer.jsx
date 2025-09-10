@@ -96,7 +96,7 @@ const Footer = () => {
             </div>
             <div>
               <h3 className="font-bold mb-2 lg:mb-3 text-base lg:text-lg text-green-400">Vriendelijk Entertainment 🤝</h3>
-              <p className="text-viral-text-secondary leading-relaxed text-sm lg:text-base">
+              <p className="text-white leading-relaxed text-sm lg:text-base">
                 Lachlijn.nl is bedoeld voor positief entertainment tussen vrienden en familie. 
                 We promoten respectvolle comedy en zorgen ervoor dat iedereen kan meelachen. 
                 Gebruik onze service voor vriendelijk vermaak met wederzijds respect en toestemming.
