@@ -259,7 +259,7 @@ const Pricing = ({ user, onAuthClick }) => {
                 <Star className="w-6 h-6 text-blue-400" />
               </div>
               <div className="text-left">
-                <div className="font-medium">Stripe Payments</div>
+                <div className="font-medium">Veilige iDEAL betalingen</div>
                 <div className="text-sm text-viral-text-secondary">Veilige betalingen</div>
               </div>
             </div>

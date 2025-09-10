@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Phone, 
@@ -30,6 +31,7 @@ import vapiService from '../services/vapiService'
 import { Link } from 'react-router-dom'
 
 const PrankCall = ({ user: initialUser }) => {
+  const navigate = useNavigate()
   // Local user state to handle credit updates
   const [user, setUser] = useState(initialUser)
   
@@ -858,15 +860,24 @@ const CallInterface = ({
             </div>
             
             <div className="flex items-center justify-center gap-4">
-              <button className="viral-button viral-button-ghost">
+              <button 
+                onClick={() => navigate('/history')}
+                className="viral-button viral-button-ghost"
+              >
                 <Download className="w-4 h-4" />
                 Download Opname
               </button>
-              <button className="viral-button viral-button-ghost">
+              <button 
+                onClick={() => navigate('/history')}
+                className="viral-button viral-button-ghost"
+              >
                 <Share className="w-4 h-4" />
                 Delen
               </button>
-              <button className="viral-button viral-button-ghost">
+              <button 
+                onClick={() => navigate('/history')}
+                className="viral-button viral-button-ghost"
+              >
                 <Heart className="w-4 h-4" />
                 Opslaan
               </button>
