@@ -532,7 +532,7 @@ const PrankCall = ({ user: initialUser }) => {
                       <span className="text-2xl">{scenarios.find(s => s.id === selectedScenario)?.icon}</span>
                       <div>
                         <div className="font-medium text-lg">{scenarios.find(s => s.id === selectedScenario)?.name}</div>
-                        <div className="text-sm text-viral-text-secondary">
+                        <div className="text-sm text-white" style={{color: 'white !important'}}>
                           {scenarios.find(s => s.id === selectedScenario)?.userDescription || scenarios.find(s => s.id === selectedScenario)?.description}
                         </div>
                       </div>
