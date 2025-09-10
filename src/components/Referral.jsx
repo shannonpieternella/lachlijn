@@ -95,7 +95,7 @@ const Referral = ({ user }) => {
   }
 
   const shareVia = (platform) => {
-    const shareText = `🎭 Kom gratis prank calls maken op PrankCall.nl! Gebruik mijn code ${referralStats.code} en krijg 5 gratis credits! `
+    const shareText = `🎭 Kom gratis prank calls maken op Lachlijn.nl! Gebruik mijn code ${referralStats.code} voor gratis toegang! `
     const shareUrl = referralStats.shareUrl
     
     const urls = {
@@ -477,7 +477,7 @@ const Referral = ({ user }) => {
                   <div className="font-medium text-viral-text mb-1">Hoe werkt het?</div>
                   <div className="text-viral-text-secondary">
                     Je verdient <strong>1 gratis credit</strong> zodra iemand die jij hebt gereferreerd 
-                    voor het eerst credits koopt. Deel je link en verdien credits!
+                    voor het eerst credits koopt. Nieuwe gebruikers krijgen 1 gratis credit bij registratie.
                   </div>
                 </div>
               </div>

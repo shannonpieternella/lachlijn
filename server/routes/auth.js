@@ -52,7 +52,7 @@ router.post('/register', async (req, res) => {
     if (referralCode) {
       referredBy = await User.findOne({ 'referral.code': referralCode })
       if (referredBy) {
-        bonusCredits = 2 // Modest bonus voor referral: 2 calls
+        bonusCredits = 1 // Same as normal: 1 call
       }
     }
 
@@ -95,7 +95,7 @@ router.post('/register', async (req, res) => {
     res.status(201).json({
       success: true,
       message: referredBy ? 
-        `Account aangemaakt! Je hebt ${bonusCredits} credits gekregen via referral! 🎉` :
+        `Account aangemaakt via referral! Je hebt 1 gratis credit! 🎉` :
         'Account succesvol aangemaakt! Je hebt 1 gratis credit! 🎉',
       user: user.toJSON(),
       token
@@ -195,8 +195,8 @@ router.get('/referral/:code', async (req, res) => {
         code: referrer.referral.code
       },
       bonus: {
-        newUserCredits: 2,
-        referrerCredits: '1 (alleen als referrer credits heeft gekocht)'
+        newUserCredits: 1,
+        referrerCredits: '1 (wanneer nieuwe user koopt)'
       }
     })
 
