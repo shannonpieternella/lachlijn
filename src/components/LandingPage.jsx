@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import AudioPlayer from './AudioPlayer'
 import { 
@@ -22,11 +22,13 @@ import {
 
 const LandingPage = ({ user, onAuthClick }) => {
   const navigate = useNavigate()
+  const { code } = useParams() // Get referral code from URL
   const [stats, setStats] = useState({
     calls: 189432,
     users: 15678,
     laughs: 1234567
   })
+  const [referralInfo, setReferralInfo] = useState(null)
 
   const [currentTestimonial, setCurrentTestimonial] = useState(0)
   const [selectedScenario, setSelectedScenario] = useState(null)
@@ -87,6 +89,22 @@ const LandingPage = ({ user, onAuthClick }) => {
     }, 4000)
     return () => clearInterval(interval)
   }, [])
+
+  // Handle referral code validation
+  useEffect(() => {
+    if (code) {
+      fetch(`/api/auth/referral/${code}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            setReferralInfo(data.referrer)
+            // Store referral code for registration
+            localStorage.setItem('referralCode', code)
+          }
+        })
+        .catch(err => console.log('Referral validation failed:', err))
+    }
+  }, [code])
 
   const scrollToSection = (sectionId) => {
     document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' })
@@ -212,6 +230,25 @@ const LandingPage = ({ user, onAuthClick }) => {
               <Sparkles className="w-4 h-4" />
               #1 Comedy Call Platform Nederland 🇳🇱
             </motion.div>
+
+            {/* Referral Banner */}
+            {referralInfo && (
+              <motion.div
+                className="mb-6 p-4 bg-gradient-to-r from-green-900/40 to-blue-900/40 rounded-lg border border-green-500/30 max-w-md mx-auto"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.6 }}
+              >
+                <div className="text-center">
+                  <div className="text-green-400 font-semibold mb-1">
+                    🎉 Je bent uitgenodigd door {referralInfo.name}!
+                  </div>
+                  <div className="text-sm text-viral-text-secondary">
+                    Maak een account aan en krijg 1 gratis comedy call!
+                  </div>
+                </div>
+              </motion.div>
+            )}
             
             <h1 className="text-5xl md:text-7xl font-black text-center mb-6">
               <span className="text-gradient bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">

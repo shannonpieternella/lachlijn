@@ -102,6 +102,15 @@ function AppContent() {
             } 
           />
           <Route 
+            path="/ref/:code" 
+            element={
+              <LandingPage 
+                user={user} 
+                onAuthClick={(mode = 'register') => { setAuthMode(mode); setShowAuthModal(true) }} 
+              />
+            } 
+          />
+          <Route 
             path="/" 
             element={
               <LandingPage 

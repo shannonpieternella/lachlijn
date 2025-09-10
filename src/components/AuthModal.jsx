@@ -18,9 +18,15 @@ const AuthModal = ({ isOpen, onClose, onAuth, initialMode = 'login' }) => {
 
     try {
       const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register'
+      const referralCode = localStorage.getItem('referralCode')
       const payload = isLogin 
         ? { email: formData.email, password: formData.password }
-        : { name: formData.name, email: formData.email, password: formData.password }
+        : { 
+            name: formData.name, 
+            email: formData.email, 
+            password: formData.password,
+            ...(referralCode && { referralCode })
+          }
 
       const response = await fetch(endpoint, {
         method: 'POST',
