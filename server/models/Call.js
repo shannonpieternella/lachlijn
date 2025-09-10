@@ -282,11 +282,6 @@ callSchema.methods.analyzeCallQuality = async function() {
   console.log(`🔍 Analyzing call quality for call ${this.id}`)
   console.log(`Duration: ${this.duration}s, End reason: ${this.vapiData?.endReason}`)
   
-  // TEMPORARY: Disable automatic refunds for testing - allow normal credit usage
-  console.log('🚫 REFUND SYSTEM DISABLED FOR TESTING - Credits will be charged normally')
-  return false // Always return false to prevent any refunds during testing
-  
-  /* DISABLED FOR TESTING
   // Rule 1: Calls shorter than 7 seconds get refunded
   if (this.duration < 7) {
     shouldRefund = true
@@ -326,7 +321,6 @@ callSchema.methods.analyzeCallQuality = async function() {
     refundReason = 'poor_quality'
     console.log('📉 Poor conversation flow - refunding')
   }
-  */
   
   // Apply refund if needed
   if (shouldRefund && !this.wasFree && this.creditsRefunded === 0) {
