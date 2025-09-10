@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Share } from 'lucide-react'
+import AudioPlayer from './AudioPlayer'
 
 const History = () => {
   const [calls, setCalls] = useState([])
@@ -143,7 +144,7 @@ const History = () => {
             const canShare = c.status === 'ended' && audioSrc
             return (
               <div key={c._id} className="bg-viral-dark-card border border-viral-border rounded-xl p-4">
-                <div className="grid grid-cols-1 md:grid-cols-6 gap-3 md:items-center">
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-3 md:items-center">
                   {/* Primary */}
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="text-2xl">{c.scenarioIcon || '🎭'}</div>
@@ -163,25 +164,17 @@ const History = () => {
                       {c.status}
                     </span>
                   </div>
-                  <div className="md:justify-self-end w-full md:w-52">
+                  <div className="md:col-span-2">
                     {audioSrc ? (
-                      <audio className="w-full h-8" controls preload="none" src={audioSrc} />
+                      <AudioPlayer
+                        src={audioSrc}
+                        title={c.scenarioName || 'Prank Call'}
+                        onShare={canShare ? () => shareCall(c) : null}
+                      />
                     ) : (
-                      <span className="text-sm text-viral-text-muted">Geen opname</span>
-                    )}
-                  </div>
-                  <div className="md:justify-self-end">
-                    {canShare ? (
-                      <button 
-                        onClick={() => shareCall(c)}
-                        className="viral-button viral-button-ghost px-3 py-2 text-sm flex items-center gap-2"
-                        title="Deel deze prank call"
-                      >
-                        <Share className="w-4 h-4" />
-                        Deel
-                      </button>
-                    ) : (
-                      <div className="w-16"></div>
+                      <div className="flex items-center justify-center p-2 bg-viral-dark rounded-lg border border-viral-muted">
+                        <span className="text-sm text-viral-text-muted">Geen opname</span>
+                      </div>
                     )}
                   </div>
                 </div>
