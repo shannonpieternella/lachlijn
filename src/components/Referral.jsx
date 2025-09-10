@@ -457,10 +457,10 @@ const Referral = ({ user }) => {
                     ) : (
                       <>
                         <div className="text-orange-400 font-bold text-sm mb-1">
-                          ⏳ Wacht op aankoop
+                          ⏳ Nog geen credits gekocht
                         </div>
                         <div className="text-xs text-viral-text-muted">
-                          Je krijgt 1 credit wanneer ze kopen
+                          Je krijgt 1 credit zodra ze credits kopen
                         </div>
                       </>
                     )}
@@ -476,8 +476,8 @@ const Referral = ({ user }) => {
                 <div className="text-sm">
                   <div className="font-medium text-viral-text mb-1">Hoe werkt het?</div>
                   <div className="text-viral-text-secondary">
-                    Je verdient <strong>1 gratis credit</strong> zodra iemand die jij hebt gereferreerd 
-                    voor het eerst credits koopt. Nieuwe gebruikers krijgen 1 gratis credit bij registratie.
+                    Je verdient <strong>1 gratis credit</strong> alleen wanneer iemand die jij hebt gereferreerd 
+                    voor het eerst credits koopt. Gewoon iemand uitnodigen geeft nog geen credit - ze moeten eerst kopen!
                   </div>
                 </div>
               </div>
