@@ -52,7 +52,7 @@ router.post('/register', async (req, res) => {
     if (referralCode) {
       referredBy = await User.findOne({ 'referral.code': referralCode })
       if (referredBy) {
-        bonusCredits = 3 // Bonus voor referral: 3 calls
+        bonusCredits = 2 // Modest bonus voor referral: 2 calls
       }
     }
 
@@ -75,18 +75,33 @@ router.post('/register', async (req, res) => {
 
     // Update referrer
     if (referredBy) {
+      // Check if referrer has purchased credits
+      const hasPurchasedCredits = referredBy.hasPurchasedCredits()
+      const creditsToGive = hasPurchasedCredits ? 1 : 0 // Only give credit if referrer has purchased credits
+      
       referredBy.referral.invites.push({
         userId: user._id,
         email: user.email,
         name: user.name,
         invitedAt: new Date(),
-        creditsEarned: 2
+        creditsEarned: creditsToGive
       })
       referredBy.referral.totalInvites += 1
-      referredBy.referral.creditsEarned += 2
-      referredBy.credits += 2 // 2 credits voor referral
+      
+      if (hasPurchasedCredits) {
+        referredBy.referral.creditsEarned += 1
+        referredBy.credits += 1 // Only 1 credit if they have purchased before
+        console.log(`🎁 Referrer ${referredBy.email} earned 1 credit for referring ${user.email}`)
+      } else {
+        console.log(`⏳ Referrer ${referredBy.email} will earn credit when they purchase credits`)
+      }
       
       await referredBy.save()
+      
+      // Check for milestones if credits were given
+      if (hasPurchasedCredits) {
+        await referredBy.checkViralMilestones()
+      }
     }
 
     // Generate JWT
@@ -195,8 +210,8 @@ router.get('/referral/:code', async (req, res) => {
         code: referrer.referral.code
       },
       bonus: {
-        newUserCredits: 5,
-        referrerCredits: 2
+        newUserCredits: 2,
+        referrerCredits: '1 (alleen als referrer credits heeft gekocht)'
       }
     })
 

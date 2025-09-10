@@ -208,8 +208,14 @@ userSchema.methods.getReferralStats = function() {
     creditsEarned: this.referral.creditsEarned,
     milestones: this.referral.milestones,
     nextMilestone: this.getNextMilestone(),
-    shareUrl: `https://prankcall.nl/ref/${this.referral.code}`
+    shareUrl: `https://lachlijn.nl/ref/${this.referral.code}`
   }
+}
+
+// Check if user has purchased credits (more than just free credit)
+userSchema.methods.hasPurchasedCredits = function() {
+  // User has purchased if they have used credits (totalCalls > 0) or have more than 1 credit
+  return this.stats.totalCalls > 0 || this.credits > 1
 }
 
 // Get next milestone info

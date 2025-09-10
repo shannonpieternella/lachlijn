@@ -273,6 +273,31 @@ router.get('/verify-payment/:sessionId', process.env.NODE_ENV === 'production' ?
       creditsAdded = credits
       console.log(`✅ Verify-payment: Added ${credits} credits, user now has ${creditedUser.credits} credits (was ${creditsBefore})`)
       
+      // Process referral rewards since user has now purchased credits
+      try {
+        let rewardsGiven = 0
+        for (let invite of creditedUser.referral.invites) {
+          if (invite.isActive && invite.creditsEarned === 0) {
+            // Give 1 credit to referrer for this invite
+            creditedUser.credits += 1
+            creditedUser.referral.creditsEarned += 1
+            invite.creditsEarned = 1
+            rewardsGiven += 1
+          }
+        }
+        
+        if (rewardsGiven > 0) {
+          await creditedUser.save()
+          console.log(`🎁 Processed ${rewardsGiven} referral rewards for user ${creditedUser.id}`)
+          
+          // Check for new milestones
+          await creditedUser.checkViralMilestones()
+        }
+      } catch (referralError) {
+        console.error('Error processing referral rewards:', referralError)
+        // Don't fail the payment if referral processing fails
+      }
+      
       // Mark session as processed
       processedSessions.add(sessionId)
     }
