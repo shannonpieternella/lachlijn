@@ -22,36 +22,70 @@ const Referral = ({ user }) => {
   const [copiedItem, setCopiedItem] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  // Mock data - replace with API call
+  // Fetch referral stats from API
   useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      setReferralStats({
-        code: user.name ? user.name.substring(0, 3).toUpperCase() + '2024' : 'PRANK24',
-        totalInvites: 2,
-        activeInvites: 2,
-        creditsEarned: 4,
-        milestones: [
-          {
-            type: 'invite_3',
-            achievedAt: new Date(),
-            reward: '5_free_calls'
+    const fetchReferralStats = async () => {
+      try {
+        const token = localStorage.getItem('authToken')
+        if (!token) {
+          setLoading(false)
+          return
+        }
+
+        const response = await fetch('/api/referrals/stats', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
           }
-        ],
-        nextMilestone: {
-          type: 'invite_5',
-          threshold: 5,
-          remaining: 3,
-          credits: 10
-        },
-        shareUrl: `https://prankcall.nl/ref/${user.name ? user.name.substring(0, 3).toUpperCase() + '2024' : 'PRANK24'}`,
-        recentInvites: [
-          { name: 'Daan V.', email: 'd***@gmail.com', invitedAt: new Date(), creditsEarned: 2 },
-          { name: 'Lisa M.', email: 'l***@outlook.com', invitedAt: new Date(), creditsEarned: 2 }
-        ]
-      })
-      setLoading(false)
-    }, 1000)
+        })
+
+        const data = await response.json()
+
+        if (data.success) {
+          setReferralStats(data.data)
+        } else {
+          console.error('Failed to fetch referral stats:', data.message)
+          // Fallback to default data
+          setReferralStats({
+            code: user.name ? user.name.substring(0, 3).toUpperCase() + Math.floor(Math.random() * 1000) : 'PRANK24',
+            totalInvites: 0,
+            activeInvites: 0,
+            creditsEarned: 0,
+            milestones: [],
+            nextMilestone: {
+              type: 'invite_3',
+              threshold: 3,
+              remaining: 3,
+              credits: 5
+            },
+            shareUrl: `https://lachlijn.nl/ref/${user.name ? user.name.substring(0, 3).toUpperCase() + Math.floor(Math.random() * 1000) : 'PRANK24'}`,
+            recentInvites: []
+          })
+        }
+      } catch (error) {
+        console.error('Error fetching referral stats:', error)
+        // Fallback to default data
+        setReferralStats({
+          code: user.name ? user.name.substring(0, 3).toUpperCase() + Math.floor(Math.random() * 1000) : 'PRANK24',
+          totalInvites: 0,
+          activeInvites: 0,
+          creditsEarned: 0,
+          milestones: [],
+          nextMilestone: {
+            type: 'invite_3',
+            threshold: 3,
+            remaining: 3,
+            credits: 5
+          },
+          shareUrl: `https://lachlijn.nl/ref/${user.name ? user.name.substring(0, 3).toUpperCase() + Math.floor(Math.random() * 1000) : 'PRANK24'}`,
+          recentInvites: []
+        })
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchReferralStats()
   }, [user])
 
   const copyToClipboard = (text, item) => {
@@ -347,7 +381,7 @@ const Referral = ({ user }) => {
           </div>
         </div>
 
-        {/* Recent Invites */}
+        {/* Referral Dashboard */}
         {referralStats.recentInvites.length > 0 && (
           <motion.div
             className="viral-card mt-8"
@@ -357,34 +391,96 @@ const Referral = ({ user }) => {
           >
             <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
               <TrendingUp className="w-6 h-6 text-viral-primary" />
-              Recente Invites
+              Mijn Referrals Dashboard
             </h2>
             
-            <div className="space-y-4">
+            {/* Summary Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              <div className="bg-viral-dark-lighter p-4 rounded-lg text-center">
+                <div className="text-2xl font-bold text-viral-primary">{referralStats.totalInvites}</div>
+                <div className="text-xs text-viral-text-secondary">Totaal Gereferreerd</div>
+              </div>
+              <div className="bg-viral-dark-lighter p-4 rounded-lg text-center">
+                <div className="text-2xl font-bold text-green-400">
+                  {referralStats.recentInvites.filter(i => i.hasPurchased).length}
+                </div>
+                <div className="text-xs text-viral-text-secondary">Hebben Gekocht</div>
+              </div>
+              <div className="bg-viral-dark-lighter p-4 rounded-lg text-center">
+                <div className="text-2xl font-bold text-yellow-400">{referralStats.creditsEarned}</div>
+                <div className="text-xs text-viral-text-secondary">Credits Verdiend</div>
+              </div>
+              <div className="bg-viral-dark-lighter p-4 rounded-lg text-center">
+                <div className="text-2xl font-bold text-orange-400">
+                  {referralStats.recentInvites.filter(i => !i.hasPurchased).length}
+                </div>
+                <div className="text-xs text-viral-text-secondary">Nog Niet Gekocht</div>
+              </div>
+            </div>
+            
+            {/* Referrals List */}
+            <div className="space-y-3">
+              <h3 className="font-semibold text-viral-text mb-3">Alle Referrals</h3>
               {referralStats.recentInvites.map((invite, index) => (
-                <div key={index} className="flex items-center justify-between p-4 bg-viral-dark-lighter rounded-lg">
+                <div key={index} className={`flex items-center justify-between p-4 rounded-lg border-2 ${
+                  invite.hasPurchased 
+                    ? 'bg-green-500/10 border-green-500/30' 
+                    : 'bg-viral-dark-lighter border-gray-600'
+                }`}>
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-viral-primary rounded-full flex items-center justify-center text-white font-bold">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold ${
+                      invite.hasPurchased ? 'bg-green-500' : 'bg-gray-500'
+                    }`}>
                       {invite.name.charAt(0)}
                     </div>
                     <div>
                       <div className="font-medium">{invite.name}</div>
                       <div className="text-sm text-viral-text-secondary">
-                        {invite.email} • {new Date(invite.invitedAt).toLocaleDateString()}
+                        {invite.email}
+                      </div>
+                      <div className="text-xs text-viral-text-muted">
+                        Gereferreerd: {new Date(invite.invitedAt).toLocaleDateString('nl-NL')}
                       </div>
                     </div>
                   </div>
                   
                   <div className="text-right">
-                    <div className="text-viral-primary font-bold">
-                      +{invite.creditsEarned} credits
-                    </div>
-                    <div className="text-xs text-green-400">
-                      ✓ Actief
-                    </div>
+                    {invite.hasPurchased ? (
+                      <>
+                        <div className="text-green-400 font-bold text-sm mb-1">
+                          ✅ +{invite.creditsEarned} credit verdiend!
+                        </div>
+                        <div className="text-xs text-viral-text-muted">
+                          Gekocht: {new Date(invite.rewardedAt).toLocaleDateString('nl-NL')}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="text-orange-400 font-bold text-sm mb-1">
+                          ⏳ Wacht op aankoop
+                        </div>
+                        <div className="text-xs text-viral-text-muted">
+                          Je krijgt 1 credit wanneer ze kopen
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               ))}
+            </div>
+            
+            {/* Helpful tip */}
+            <div className="mt-6 p-4 bg-viral-primary/10 border border-viral-primary/30 rounded-lg">
+              <div className="flex items-start gap-3">
+                <div className="text-viral-primary">💡</div>
+                <div className="text-sm">
+                  <div className="font-medium text-viral-text mb-1">Hoe werkt het?</div>
+                  <div className="text-viral-text-secondary">
+                    Je verdient <strong>1 gratis credit</strong> zodra iemand die jij hebt gereferreerd 
+                    voor het eerst credits koopt. Deel je link en verdien credits!
+                  </div>
+                </div>
+              </div>
             </div>
           </motion.div>
         )}

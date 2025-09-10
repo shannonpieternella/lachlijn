@@ -21,6 +21,7 @@ import Navigation from './components/Navigation'
 import Footer from './components/Footer'
 import PublicRecording from './components/PublicRecording'
 import History from './components/History'
+import Referral from './components/Referral'
 
 // Styles
 import './viral.css'
@@ -168,6 +169,20 @@ function AppContent() {
                 <>
                   <Navigation user={user} onLogout={handleLogout} />
                   <History />
+                  <Footer />
+                </>
+              ) : (
+                <Navigate to="/" />
+              )
+            } 
+          />
+          <Route 
+            path="/referral" 
+            element={
+              user ? (
+                <>
+                  <Navigation user={user} onLogout={handleLogout} />
+                  <Referral user={user} />
                   <Footer />
                 </>
               ) : (

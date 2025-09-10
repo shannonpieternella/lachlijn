@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Laugh, Menu, X, Home, Zap, CreditCard, User, LogOut, Gift } from 'lucide-react'
+import { Laugh, Menu, X, Home, Zap, CreditCard, User, LogOut, Gift, Users } from 'lucide-react'
 import { useLocation, Link } from 'react-router-dom'
 
 const Navigation = ({ user, onLogout }) => {
@@ -10,6 +10,7 @@ const Navigation = ({ user, onLogout }) => {
   const navItems = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },
     { name: 'Comedy Calls', href: '/prank', icon: Zap },
+    { name: 'Referrals', href: '/referral', icon: Users },
     { name: 'Credits', href: '/pricing', icon: CreditCard },
     { name: 'Profiel', href: '/profile', icon: User },
   ]
