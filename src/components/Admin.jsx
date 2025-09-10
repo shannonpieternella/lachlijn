@@ -80,19 +80,30 @@ const Admin = ({ user }) => {
     }
   }, [])
 
-  // Fetch VAPI agents
+  // Fetch VAPI agents via backend
   const fetchVapiAgents = async () => {
     setLoadingAgents(true)
     try {
-      console.log('Fetching VAPI agents...')
-      const agents = await vapiService.getAgents()
-      console.log('Fetched agents:', agents)
+      console.log('Fetching VAPI agents via backend...')
       
-      if (!Array.isArray(agents)) {
-        console.warn('VAPI response is not an array:', agents)
-        setVapiAgents([])
-        return
+      const response = await fetch('/api/vapi/agents', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        }
+      })
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
       }
+      
+      const data = await response.json()
+      console.log('Backend response:', data)
+      
+      if (!data.success) {
+        throw new Error(data.message || 'Failed to fetch agents')
+      }
+      
+      const agents = data.agents || []
       
       // Transform VAPI response to our format
       const formattedAgents = agents.map(agent => ({

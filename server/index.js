@@ -15,6 +15,7 @@ import scenarioRoutes from './routes/scenarios.js'
 import adminRoutes from './routes/admin.js'
 import billingRoutes, { billingWebhookHandler } from './routes/billing.js'
 import referralRoutes from './routes/referrals.js'
+import vapiRoutes from './routes/vapi.js'
 
 // Load environment variables
 dotenv.config()
@@ -100,6 +101,7 @@ app.use('/api/scenarios', scenarioRoutes)
 app.use('/api/admin', adminRoutes)
 app.use('/api/billing', billingRoutes)
 app.use('/api/referrals', referralRoutes)
+app.use('/api/vapi', vapiRoutes)
 
 // Simple HTML history page
 app.get('/history', (req, res) => {
