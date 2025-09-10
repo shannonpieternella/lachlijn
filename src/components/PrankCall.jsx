@@ -527,7 +527,7 @@ const PrankCall = ({ user: initialUser }) => {
                     <CheckCircle className="w-6 h-6 text-viral-primary" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-bold text-white mb-1">✅ Gekozen Comedy Scenario:</h3>
+                    <h3 className="font-bold text-white mb-1" style={{color: 'white !important'}}>✅ Gekozen Comedy Scenario:</h3>
                     <div className="flex items-center gap-3">
                       <span className="text-2xl">{scenarios.find(s => s.id === selectedScenario)?.icon}</span>
                       <div>
