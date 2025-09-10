@@ -26,11 +26,11 @@ const Navigation = ({ user, onLogout }) => {
             <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
               <Laugh className="w-6 h-6 text-white" />
             </div>
-            <span className="text-2xl font-bold viral-title">Lachlijn.nl</span>
+            <span className="text-lg font-bold viral-title flex items-center">Lachlijn.nl</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-6">
             {navItems.map((item) => (
               <Link
                 key={item.name}
@@ -50,10 +50,11 @@ const Navigation = ({ user, onLogout }) => {
           {/* User Menu & Credits */}
           <div className="hidden md:flex items-center gap-4">
             {/* Credits Badge */}
-            <div className="flex items-center gap-2">
-              <div className="viral-badge">
-                <Zap className="w-4 h-4" />
-                {user?.credits || 0} credits
+            <div className="flex items-center gap-3">
+              <div className="viral-badge flex items-center gap-1 text-sm">
+                <Zap className="w-3 h-3" />
+                <span>{user?.credits || 0}</span>
+                <span className="text-xs">CREDITS</span>
               </div>
               {user?.credits === 1 && (
                 <div className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1">
