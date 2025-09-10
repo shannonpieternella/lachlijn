@@ -84,8 +84,15 @@ const Admin = ({ user }) => {
   const fetchVapiAgents = async () => {
     setLoadingAgents(true)
     try {
+      console.log('Fetching VAPI agents...')
       const agents = await vapiService.getAgents()
       console.log('Fetched agents:', agents)
+      
+      if (!Array.isArray(agents)) {
+        console.warn('VAPI response is not an array:', agents)
+        setVapiAgents([])
+        return
+      }
       
       // Transform VAPI response to our format
       const formattedAgents = agents.map(agent => ({
@@ -97,61 +104,16 @@ const Admin = ({ user }) => {
         transcriber: agent.transcriber?.provider || 'deepgram'
       }))
       
+      console.log('Formatted agents:', formattedAgents)
       setVapiAgents(formattedAgents)
+      
+      if (formattedAgents.length === 0) {
+        alert('Geen VAPI agents gevonden in je account. Maak eerst agents aan in je VAPI dashboard.')
+      }
     } catch (error) {
       console.error('Error fetching VAPI agents:', error)
-      
-      // Mock data tijdens development/testing
-      setVapiAgents([
-        { 
-          id: 'mock_agent_1', 
-          name: 'Pizza Bot NL', 
-          description: 'Nederlandse pizza bestelling agent',
-          model: 'gpt-4',
-          voice: 'elevenlabs',
-          transcriber: 'deepgram'
-        },
-        { 
-          id: 'mock_agent_2', 
-          name: 'Loterij Bot', 
-          description: 'Loterij winnaar announcement agent',
-          model: 'gpt-4',
-          voice: 'elevenlabs', 
-          transcriber: 'deepgram'
-        },
-        { 
-          id: 'mock_agent_3', 
-          name: 'Oma Bot', 
-          description: 'Verwarde oma character agent',
-          model: 'gpt-4',
-          voice: 'elevenlabs',
-          transcriber: 'deepgram'
-        },
-        { 
-          id: 'mock_agent_4', 
-          name: 'Radio DJ Bot', 
-          description: 'Radio interview host agent',
-          model: 'gpt-4',
-          voice: 'elevenlabs',
-          transcriber: 'deepgram'
-        },
-        { 
-          id: 'mock_agent_5', 
-          name: 'HR Bot', 
-          description: 'Job interview agent',
-          model: 'gpt-4',
-          voice: 'elevenlabs',
-          transcriber: 'deepgram'
-        },
-        { 
-          id: 'mock_agent_6', 
-          name: 'Sales Bot', 
-          description: 'Product verkoop agent',
-          model: 'gpt-4',
-          voice: 'elevenlabs',
-          transcriber: 'deepgram'
-        }
-      ])
+      alert(`Fout bij ophalen VAPI agents: ${error.message}\n\nControleer je VAPI API key en internetverbinding.`)
+      setVapiAgents([])
     }
     setLoadingAgents(false)
   }
