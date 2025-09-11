@@ -43,7 +43,7 @@ const AuthModal = ({ isOpen, onClose, onAuth, initialMode = 'login' }) => {
         localStorage.setItem('authToken', data.token)
         
         // Pass user data to parent with registration flag
-        const isNewRegistration = mode === 'register'
+        const isNewRegistration = !isLogin // isLogin = false means register
         onAuth(data.user, isNewRegistration)
         
         // Reset form
