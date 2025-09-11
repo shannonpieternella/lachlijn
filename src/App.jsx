@@ -22,6 +22,7 @@ import Footer from './components/Footer'
 import PublicRecording from './components/PublicRecording'
 import History from './components/History'
 import Referral from './components/Referral'
+import RegistrationSuccess from './components/RegistrationSuccess'
 
 // Styles
 import './viral.css'
@@ -64,11 +65,16 @@ function AppContent() {
     }
   }, [])
 
-  const handleAuth = (userData) => {
+  const handleAuth = (userData, isNewRegistration = false) => {
     setUser(userData)
     localStorage.setItem('prankUser', JSON.stringify(userData))
     setShowAuthModal(false)
-    navigate('/dashboard') // Navigate to dashboard after successful login
+    
+    if (isNewRegistration) {
+      navigate('/registration-success') // New users go to success page first
+    } else {
+      navigate('/dashboard') // Existing users go directly to dashboard
+    }
   }
 
   const handleLogout = () => {
@@ -194,6 +200,16 @@ function AppContent() {
                   <Referral user={user} />
                   <Footer />
                 </>
+              ) : (
+                <Navigate to="/" />
+              )
+            } 
+          />
+          <Route 
+            path="/registration-success" 
+            element={
+              user ? (
+                <RegistrationSuccess />
               ) : (
                 <Navigate to="/" />
               )

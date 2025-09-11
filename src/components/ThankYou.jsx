@@ -70,6 +70,16 @@ const ThankYou = ({ user, onUserUpdate }) => {
           credits: result.credits,
           message: result.message
         })
+
+        // Facebook Pixel - Track successful purchase
+        if (typeof window !== 'undefined' && window.fbq) {
+          window.fbq('track', 'Purchase', {
+            value: result.amount || 0, // Purchase amount in euros
+            currency: 'EUR',
+            content_name: `Credits Pack (${result.credits} credits)`,
+            content_category: 'Credits'
+          })
+        }
         
         // Update user data with fresh data from server (server already added credits)
         if (onUserUpdate && result.user) {
@@ -125,7 +135,19 @@ const ThankYou = ({ user, onUserUpdate }) => {
           const currentCredits = data?.user?.credits ?? baselineCredits
           if (currentCredits > baselineCredits) {
             // Credits arrived via webhook
-            setPaymentData({ credits: currentCredits - baselineCredits, message: 'Credits toegevoegd via webhook' })
+            const creditsAdded = currentCredits - baselineCredits
+            setPaymentData({ credits: creditsAdded, message: 'Credits toegevoegd via webhook' })
+            
+            // Facebook Pixel - Track purchase via webhook
+            if (typeof window !== 'undefined' && window.fbq) {
+              window.fbq('track', 'Purchase', {
+                value: creditsAdded * 0.5, // Estimated value (€0.50 per credit)
+                currency: 'EUR',
+                content_name: `Credits Pack (${creditsAdded} credits)`,
+                content_category: 'Credits'
+              })
+            }
+            
             if (onUserUpdate) onUserUpdate(data.user)
             setPending(false)
             return
